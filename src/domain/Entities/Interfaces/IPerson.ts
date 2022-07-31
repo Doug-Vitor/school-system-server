@@ -1,4 +1,4 @@
 export default interface IPerson {
-    Name: String,
+    Name: string,
     Birthdate: Date
 }

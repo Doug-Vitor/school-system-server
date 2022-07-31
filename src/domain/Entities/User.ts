@@ -1,13 +1,13 @@
 import IUser from "./Interfaces/IUser";
 
 export default class User implements IUser {
-    Email: String;
-    Username: String;
-    Password: String;
+    Email: string;
+    Username: string;
+    Password: string;
 
-    OwnerId: String | Number;
+    OwnerId: string | Number;
     
-    constructor(email: String, username: String, password: String, ownerId: String | Number) {
+    constructor(email: string, username: string, password: string, ownerId: string | number) {
         this.Email = email;
         this.Username = username;
         this.Password = password,

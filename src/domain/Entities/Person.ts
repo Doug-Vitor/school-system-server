@@ -2,10 +2,10 @@ import IPerson from "./Interfaces/IPerson";
 import BaseEntity from "./BaseEntity";
 
 export default abstract class Person extends BaseEntity implements IPerson {
-    Name: String;
+    Name: string;
     Birthdate: Date;
 
-    constructor(name: String, birthdate: Date, id?: String | Number) {
+    constructor(name: string, birthdate: Date, id?: string | number) {
         super(id);
 
         this.Name = name;
