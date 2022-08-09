@@ -5,7 +5,7 @@ export default abstract class Person extends BaseEntity implements IPerson {
     Name: string;
     Birthdate: Date;
 
-    constructor(name: string, birthdate: Date, id?: string | number) {
+    constructor(name: string, birthdate: Date, id?: string) {
         super(id);
 
         this.Name = name;

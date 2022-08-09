@@ -1,10 +1,11 @@
-import { getApp, initializeApp } from 'firebase/app';
+import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
 
-import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentData, DocumentSnapshot, QuerySnapshot } from 'firebase/firestore';
-import { collection, getFirestore, doc, addDoc, getDoc, getDocs, query, updateDoc, deleteDoc } from 'firebase/firestore';
+import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentData, DocumentSnapshot, QuerySnapshot, getFirestore } from 'firebase/firestore';
+import { collection, doc, addDoc, getDoc, getDocs, query, updateDoc, deleteDoc } from 'firebase/firestore';
 
-import { env } from 'process';
 import { converter } from './Converters/DefaultConverter';
+import { config } from 'dotenv';
+config({ path: '../.env' });
 
 export default class Firestore<T> {
     private _database: FirestoreApp;
@@ -15,25 +16,33 @@ export default class Firestore<T> {
     constructor(collectionName: string) {
         this._database = this.initializeFirestore();
 
-
         this._collectionName = collectionName;
         this._collection = collection(this._database, collectionName).withConverter(converter<T>());
     }
 
     private initializeFirestore() {
-        const options = {
-            apiKey: env.MAIN_DATABASE_KEY,
-            authDomain: env.MAIN_DATABASE_AUTH_DOMAIN
+        /* KNOWN ISSUE: customs variables is undefined (maybe the folder structuring?).
+        const options: FirebaseOptions = {
+            apiKey: process.env.MAIN_DATABASE_KEY,
+            authDomain: process.env.MAIN_DATABASE_AUTH_DOMAIN,
+            projectId: process.env.MAIN_DATABASE_PROJECT_ID
+        };*/
+
+        // SHOULD NOT BE HERE!
+        const options: FirebaseOptions = {
+            apiKey: "AIzaSyCupPnvf3ipjjvFGY64ttJ1fIfnz-di7yI",
+            authDomain: "school-system-1914.firebaseapp.com",
+            projectId: "school-system-1914"
         };
 
-        return getApp() ? getFirestore(getApp()) : getFirestore(initializeApp(options));
+        return getApps().length === 0 ? getFirestore(initializeApp(options)) : getFirestore(getApp());
     }
 
     private getDocRefById(id: string): DocumentReference<T> {
         return doc(this._collection, id).withConverter(converter<T>());
     }
 
-    addDoc(data: T): Promise<DocumentReference<DocumentData>> {
+    addDoc(data: T): Promise<DocumentReference> {
         return addDoc(this._collection, data);
     }
 
