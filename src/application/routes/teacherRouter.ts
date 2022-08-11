@@ -1,9 +1,7 @@
 import express, { Request, Response } from 'express';
 import Teacher from '../../domain/Entities/Teacher';
-import TeacherRepository from '../../infrastructure/Repositories/TeacherRepository';
 
 const router = express.Router();
-const repository: TeacherRepository = new TeacherRepository();
 
 router.get('/', (req: Request, res: Response) => {
     res.send({
@@ -19,10 +17,10 @@ router.get('/:id', (req: Request, res: Response) => {
     });
 });
 
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', (req: Request, res: Response) => {
     res.send({
         body: req.body,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), 1)
+        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
     }); 
 });
 

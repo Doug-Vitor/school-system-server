@@ -8,7 +8,7 @@ const converter = <T>() => ({
     },
 
     fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T {
-        return snapshot.id, snapshot.data() as T;
+        return { ...snapshot.data(), Id: snapshot.id } as unknown as T;
     }
 });
 

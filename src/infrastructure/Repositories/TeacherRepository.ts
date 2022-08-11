@@ -13,7 +13,7 @@ export default class TeacherRepository implements IBaseRepository<Teacher> {
         try {
             return this.getById((await this._firestore.addDoc(object)).id);
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }
@@ -22,20 +22,43 @@ export default class TeacherRepository implements IBaseRepository<Teacher> {
         try {
             return (await this._firestore.getDocById(id)).data() as Teacher;
         } catch (error) {
-            console.log(error);
+            console.error(error);
             throw error;
         }
     }
 
-    getWithPagination(page?: number | undefined): Promise<Teacher[]> {
-        throw new Error("Method not implemented.");
+    async getWithPagination(page?: number | undefined): Promise<Teacher[]> {
+        try {
+            const teachers: Teacher[] = [];
+
+            (await this._firestore.getDocs()).docs.forEach(doc => {
+                teachers.push(doc.data() as Teacher);
+            })
+
+            return teachers;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    update(id: string, object: Teacher): Promise<Teacher> {
-        throw new Error("Method not implemented.");
+    async update(id: string, object: Teacher): Promise<Teacher> {
+        try {
+            await this._firestore.updateDoc(id, object);
+            return await this.getById(id);
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 
-    delete(id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async delete(id: string): Promise<boolean> {
+        try {
+            await this._firestore.deleteDoc(id);
+            return true;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
     }
 }
