@@ -1,7 +1,9 @@
+import DefaultResponse from "../../Responses/DefaultResponse"
+
 export default interface IBaseRepository<T> {
-    insert(object: T): Promise<T>
-    getById(id: string): Promise<T>
-    getWithPagination(page?: number): Promise<T[]>
-    update(id: string, object: T): Promise<T>
-    delete(id: string): Promise<boolean>
+    Insert(object: T): Promise<DefaultResponse<T>>
+    GetById(id: string): Promise<DefaultResponse<T>>
+    GetWithPagination(page?: number): Promise<DefaultResponse<T[]>>
+    Update(id: string, object: T): Promise<DefaultResponse<T>>
+    Delete(id: string): Promise<DefaultResponse<void>>
 }

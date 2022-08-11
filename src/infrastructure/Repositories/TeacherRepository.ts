@@ -2,6 +2,10 @@ import Teacher from "../../domain/Entities/Teacher";
 import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
 import Firestore from "../Firestore";
 
+import DefaultResponse from "../../domain/Responses/DefaultResponse";
+import ErrorResponse from '../../domain/Responses/ErrorResponse';
+import Responses from "../../domain/Responses/Responses";
+
 export default class TeacherRepository implements IBaseRepository<Teacher> {
     private _firestore: Firestore<Teacher>;
 
@@ -9,56 +13,59 @@ export default class TeacherRepository implements IBaseRepository<Teacher> {
         this._firestore = new Firestore<Teacher>("teachers");
     }
 
-    async insert(object: Teacher): Promise<Teacher> {
+    private ValidateId(id: string) {
+        if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Forneça um identificador (ID) válido.");
+    }
+
+    public async Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            return this.getById((await this._firestore.addDoc(object)).id);
+            return this.GetById((await this._firestore.AddDoc(object)).id);
         } catch (error) {
-            console.error(error);
-            throw error;
+            throw new ErrorResponse();
         }
     }
 
-    async getById(id: string): Promise<Teacher> {
+    public async GetById(id: string): Promise<DefaultResponse<Teacher>> {
         try {
-            return (await this._firestore.getDocById(id)).data() as Teacher;
+            this.ValidateId(id);
+            const teacher = (await this._firestore.GetDocById(id)).data() as Teacher;
+
+            if (teacher) return new DefaultResponse(teacher);
+            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um professor com o identificador fornecido.");
         } catch (error) {
-            console.error(error);
-            throw error;
+            throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
     }
 
-    async getWithPagination(page?: number | undefined): Promise<Teacher[]> {
+    public async GetWithPagination(page?: number | undefined): Promise<DefaultResponse<Teacher[]>> {
         try {
             const teachers: Teacher[] = [];
 
-            (await this._firestore.getDocs()).docs.forEach(doc => {
+            (await this._firestore.GetDocs()).docs.forEach(doc => {
                 teachers.push(doc.data() as Teacher);
             })
 
-            return teachers;
+            return new DefaultResponse(teachers);
         } catch (error) {
-            console.error(error);
-            throw error;
+            throw new ErrorResponse();
         }
     }
 
-    async update(id: string, object: Teacher): Promise<Teacher> {
+    public async Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            await this._firestore.updateDoc(id, object);
-            return await this.getById(id);
+            const teacher = Object.assign({ ...(await this.GetById(id)).Data }, object);
+            return new DefaultResponse(teacher);
         } catch (error) {
-            console.error(error);
-            throw error;
+            throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
     }
 
-    async delete(id: string): Promise<boolean> {
+    public async Delete(id: string): Promise<DefaultResponse<void>> {
         try {
-            await this._firestore.deleteDoc(id);
-            return true;
+            await this._firestore.DeleteDoc((await this.GetById(id)).Data?.Id as string);
+            return new DefaultResponse();
         } catch (error) {
-            console.error(error);
-            throw error;
+            throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
     }
 }
