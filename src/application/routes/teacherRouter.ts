@@ -1,42 +1,36 @@
 import express, { Request, Response } from 'express';
 import Teacher from '../../domain/Entities/Teacher';
+import TeacherRepository from '../../infrastructure/Repositories/TeacherRepository';
 
 const router = express.Router();
+const repository: TeacherRepository = new TeacherRepository();
 
-router.get('/', (req: Request, res: Response) => {
+router.get('/', async (req: Request, res: Response) => {
     res.send({
         page: req.query.page,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
+        teachers: await repository.getWithPagination()
     });
 });
 
-router.get('/:id', (req: Request, res: Response) => {
-    res.send({
-        id: req.params.id,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
-    });
+router.get('/:id', async (req: Request, res: Response) => {
+    res.send({ teacher: await repository.getById(req.params.id) });
 });
 
-router.post('/', (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
+    const { name, birthdate } = req.body;
     res.send({
         body: req.body,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
-    }); 
-});
-
-router.put('/:id', (req: Request, res: Response) => {
-    res.send({
-        id: req.params.id,
-        body: req.body,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
+        teacher: await repository.insert(new Teacher(name, new Date(birthdate)))
     });
 });
 
-router.delete('/:id', (req: Request, res: Response) => {
-    res.send({
-        id: req.params.id,
-        teacher: new Teacher('Fulano', new Date(1990, 12, 5), "1")
-    });
+router.patch('/:id', async (req: Request, res: Response) => {
+    const teacher: Teacher = { ...req.body };
+    res.send({ teacher: repository.update(req.params.id, teacher) });
+});
+
+router.delete('/:id', async (req: Request, res: Response) => {
+    res.send({ teacher: await repository.delete(req.params.id) });
 });
 
 export default router;

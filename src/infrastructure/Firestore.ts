@@ -4,24 +4,24 @@ import { Firestore as FirestoreApp, CollectionReference, DocumentReference, Docu
 import { collection, doc, addDoc, getDoc, getDocs, query, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import { converter } from './Converters/DefaultConverter';
-import { config } from 'dotenv';
-config({ path: '../.env' });
 
 export default class Firestore<T> {
     private _database: FirestoreApp;
+    private converter;
 
     private _collectionName: string;
     private _collection: CollectionReference;
 
     constructor(collectionName: string) {
         this._database = this.initializeFirestore();
+        this.converter = converter<T>();
 
         this._collectionName = collectionName;
-        this._collection = collection(this._database, collectionName).withConverter(converter<T>());
+        this._collection = collection(this._database, collectionName).withConverter(this.converter);
     }
 
     private initializeFirestore() {
-        /* KNOWN ISSUE: customs variables is undefined (maybe the folder structuring?).
+        /* KNOWN ISSUE: customs environment variables is undefined (maybe the folder structuring?).
         const options: FirebaseOptions = {
             apiKey: process.env.MAIN_DATABASE_KEY,
             authDomain: process.env.MAIN_DATABASE_AUTH_DOMAIN,
@@ -39,7 +39,7 @@ export default class Firestore<T> {
     }
 
     private getDocRefById(id: string): DocumentReference<T> {
-        return doc(this._collection, id).withConverter(converter<T>());
+        return doc(this._collection, id).withConverter(this.converter);
     }
 
     addDoc(data: T): Promise<DocumentReference> {
@@ -47,11 +47,11 @@ export default class Firestore<T> {
     }
 
     getDocById(id: string): Promise<DocumentSnapshot<DocumentData>> {
-        return getDoc(doc(this._database, this._collectionName, id));
+        return getDoc(doc(this._database, this._collectionName, id).withConverter(this.converter));
     }
 
     getDocs(): Promise<QuerySnapshot<DocumentData>> {
-        return getDocs(query(this._collection));
+        return getDocs(query(this._collection).withConverter(this.converter));
     }
 
     updateDoc(id: string, data: {}): Promise<void> {
