@@ -1,23 +1,24 @@
-import Teacher from "../../domain/Entities/Teacher";
+import IBaseEntity from "../../domain/Entities/Interfaces/IBaseEntity";
+
 import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
 import Firestore from "../Firestore";
 
+import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
-import Responses from "../../domain/Responses/Responses";
 
-export default class TeacherRepository implements IBaseRepository<Teacher> {
-    private _firestore: Firestore<Teacher>;
+export default class BaseRepository<T extends IBaseEntity> implements IBaseRepository<T> {
+    private _firestore: Firestore<T>;
 
-    constructor() {
-        this._firestore = new Firestore<Teacher>("teachers");
+    constructor(collectionName: string) {
+        this._firestore = new Firestore<T>(collectionName);
     }
 
     private ValidateId(id: string) {
         if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Forneça um identificador (ID) válido.");
     }
 
-    public async Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
+    public async Insert(object: T): Promise<DefaultResponse<T>> {
         try {
             return this.GetById((await this._firestore.AddDoc(object)).id);
         } catch (error) {
@@ -25,36 +26,34 @@ export default class TeacherRepository implements IBaseRepository<Teacher> {
         }
     }
 
-    public async GetById(id: string): Promise<DefaultResponse<Teacher>> {
+    public async GetById(id: string): Promise<DefaultResponse<T>> {
         try {
             this.ValidateId(id);
-            const teacher = (await this._firestore.GetDocById(id)).data() as Teacher;
+            const object = (await this._firestore.GetDocById(id)).data() as T;
 
-            if (teacher) return new DefaultResponse(teacher);
-            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um professor com o identificador fornecido.");
+            if (object) return new DefaultResponse(object);
+            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar nenhum resultado que corresponda ao identificador fornecido.");
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
     }
 
-    public async GetWithPagination(page?: number | undefined): Promise<DefaultResponse<Teacher[]>> {
+    public async GetWithPagination(page?: number | undefined): Promise<DefaultResponse<T[]>> {
         try {
-            const teachers: Teacher[] = [];
+            const objects: T[] = [];
 
-            (await this._firestore.GetDocs()).docs.forEach(doc => {
-                teachers.push(doc.data() as Teacher);
-            })
+            (await this._firestore.GetDocs()).docs.forEach(doc => objects.push(doc.data() as T));
 
-            return new DefaultResponse(teachers);
+            return new DefaultResponse(objects);
         } catch (error) {
             throw new ErrorResponse();
         }
     }
 
-    public async Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
+    public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
-            const teacher = Object.assign({ ...(await this.GetById(id)).Data }, object);
-            return new DefaultResponse(teacher);
+            const updated = Object.assign({ ...(await this.GetById(id)).Data }, object);
+            return new DefaultResponse(updated);
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
