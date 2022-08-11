@@ -1,4 +1,4 @@
-import IBaseEntity from "../../domain/Entities/Interfaces/IBaseEntity";
+import BaseEntity from "../../domain/Entities/BaseEntity";
 
 import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
 import Firestore from "../Firestore";
@@ -7,7 +7,7 @@ import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 
-export default class BaseRepository<T extends IBaseEntity> implements IBaseRepository<T> {
+export default class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> {
     private _firestore: Firestore<T>;
 
     constructor(collectionName: string) {
@@ -53,6 +53,9 @@ export default class BaseRepository<T extends IBaseEntity> implements IBaseRepos
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
             const updated = Object.assign({ ...(await this.GetById(id)).Data }, object);
+            if (id != updated.Id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Identificador fornecido não é idêntico ao identificador armazenado");
+
+            this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse();
