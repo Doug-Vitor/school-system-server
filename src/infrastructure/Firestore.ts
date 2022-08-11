@@ -13,14 +13,14 @@ export default class Firestore<T> {
     private _collection: CollectionReference;
 
     constructor(collectionName: string) {
-        this._database = this.initializeFirestore();
+        this._database = this.InitializeFirestore();
         this.converter = converter<T>();
 
         this._collectionName = collectionName;
         this._collection = collection(this._database, collectionName).withConverter(this.converter);
     }
 
-    private initializeFirestore() {
+    private InitializeFirestore() {
         /* KNOWN ISSUE: customs environment variables is undefined (maybe the folder structuring?).
         const options: FirebaseOptions = {
             apiKey: process.env.MAIN_DATABASE_KEY,
@@ -38,27 +38,27 @@ export default class Firestore<T> {
         return getApps().length === 0 ? getFirestore(initializeApp(options)) : getFirestore(getApp());
     }
 
-    private getDocRefById(id: string): DocumentReference<T> {
+    private GetDocRefById(id: string): DocumentReference<T> {
         return doc(this._collection, id).withConverter(this.converter);
     }
 
-    addDoc(data: T): Promise<DocumentReference> {
+    public AddDoc(data: T): Promise<DocumentReference> {
         return addDoc(this._collection, data);
     }
 
-    getDocById(id: string): Promise<DocumentSnapshot<DocumentData>> {
+    public GetDocById(id: string): Promise<DocumentSnapshot<DocumentData>> {
         return getDoc(doc(this._database, this._collectionName, id).withConverter(this.converter));
     }
 
-    getDocs(): Promise<QuerySnapshot<DocumentData>> {
+    public GetDocs(): Promise<QuerySnapshot<DocumentData>> {
         return getDocs(query(this._collection).withConverter(this.converter));
     }
 
-    updateDoc(id: string, data: {}): Promise<void> {
-        return updateDoc(this.getDocRefById(id), data);
+    public UpdateDoc(id: string, data: {}): Promise<void> {
+        return updateDoc(this.GetDocRefById(id), data);
     }
 
-    deleteDoc(id: string): Promise<void> {
-        return deleteDoc(this.getDocRefById(id));
+    public DeleteDoc(id: string): Promise<void> {
+        return deleteDoc(this.GetDocRefById(id));
     }
 }
