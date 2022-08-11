@@ -1,36 +1,57 @@
 import express, { Request, Response } from 'express';
 import Teacher from '../../domain/Entities/Teacher';
-import TeacherRepository from '../../infrastructure/Repositories/TeacherRepository';
+import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
+
+import ErrorResponse from '../../domain/Responses/ErrorResponse'
 
 const router = express.Router();
-const repository: TeacherRepository = new TeacherRepository();
+const repository: BaseRepository<Teacher> = new BaseRepository<Teacher>("teachers");
 
 router.get('/', async (req: Request, res: Response) => {
-    res.send({
-        page: req.query.page,
-        teachers: await repository.GetWithPagination()
-    });
+    try {
+        res.send({ response: await repository.GetWithPagination() })
+    }
+    catch (error: ErrorResponse<unknown> | any) {
+        res.status(error.StatusCode).send({ response: error });
+    }
 });
 
 router.get('/:id', async (req: Request, res: Response) => {
-    res.send({ teacher: await repository.GetById(req.params.id) });
+    try {
+        res.send({ response: await repository.GetById(req.params.id) })
+    }
+    catch (error: ErrorResponse<unknown> | any) {
+        res.status(error.StatusCode).send({ response: error });
+    }
 });
 
 router.post('/', async (req: Request, res: Response) => {
     const { name, birthdate } = req.body;
-    res.send({
-        body: req.body,
-        teacher: await repository.Insert(new Teacher(name, new Date(birthdate)))
-    });
+    try {
+        res.send({ response: await repository.Insert(new Teacher(name, new Date(birthdate))) })
+    }
+    catch (error: ErrorResponse<unknown> | any) {
+        res.status(error.StatusCode).send({ response: error });
+    }
 });
 
 router.patch('/:id', async (req: Request, res: Response) => {
     const teacher: Teacher = { ...req.body };
-    res.send({ teacher: repository.Update(req.params.id, teacher) });
+    try {
+        res.send({ response: await repository.Update(req.params.id, teacher) });
+    }
+    catch (error: ErrorResponse<unknown> | any) {
+        res.status(error.StatusCode).send({ response: error });
+    }
 });
 
 router.delete('/:id', async (req: Request, res: Response) => {
-    res.send({ teacher: await repository.Delete(req.params.id) });
+    try {
+        res.send({ response: await repository.Delete(req.params.id) })
+    }
+    catch (error: ErrorResponse<unknown> | any) {
+        res.status(error.StatusCode).send({ response: error });
+    }
 });
 
 export default router;
