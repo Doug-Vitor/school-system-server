@@ -15,7 +15,7 @@ function isBearerToken(token?: string) {
     throw new ErrorResponse(Responses.UNAUTHORIZED_ERROR.StatusCode, "Token não fornecido");
 }
 
-const generateToken = (userId: string, expiresIn?: number) => jwt.sign(userId, secret, { expiresIn });
+const generateToken = (userId: string, expiresIn: number = 86000) => jwt.sign({ userId }, secret, { expiresIn });
 
 const validateToken = (headerToken?: string) => jwt.verify(isBearerToken(headerToken), secret, error => {
     if (error) throw new ErrorResponse(Responses.WRONG_CREDENTIALS_ERROR.StatusCode, "Token inválido");
