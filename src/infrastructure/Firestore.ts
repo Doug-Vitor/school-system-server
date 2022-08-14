@@ -1,7 +1,7 @@
 import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
 
 import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentData, DocumentSnapshot, QuerySnapshot, getFirestore } from 'firebase/firestore';
-import { collection, doc, addDoc, getDoc, getDocs, query, updateDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, where, query, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import { converter } from './Converters/DefaultConverter';
 
@@ -46,11 +46,15 @@ export default class Firestore<T> {
         return addDoc(this._collection, data);
     }
 
-    public GetDocById(id: string): Promise<DocumentSnapshot<DocumentData>> {
+    public GetDocById(id: string): Promise<DocumentSnapshot<T>> {
         return getDoc(doc(this._database, this._collectionName, id).withConverter(this.converter));
     }
 
-    public GetDocs(): Promise<QuerySnapshot<DocumentData>> {
+    public GetDocsByField(fieldName: string, searchValue: string): Promise<QuerySnapshot<T>> {
+        return getDocs(query(this._collection, where(fieldName, "==", searchValue)).withConverter(this.converter));
+    }
+
+    public GetDocs(): Promise<QuerySnapshot<T>> {
         return getDocs(query(this._collection).withConverter(this.converter));
     }
 
