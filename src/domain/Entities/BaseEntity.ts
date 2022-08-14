@@ -1,7 +1,7 @@
 import IBaseEntity from "./Interfaces/IBaseEntity";
 
 export default abstract class BaseEntity implements IBaseEntity {
-    Id?: string;
+    Id: string;
     CreatedAt: Date;
 
     constructor(id: string = '', createdAt: Date = new Date()) {

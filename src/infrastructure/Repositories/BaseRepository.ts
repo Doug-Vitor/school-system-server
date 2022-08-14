@@ -45,7 +45,8 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
 
             (await this._firestore.GetDocsByField(fieldName, query)).docs.forEach(doc => objects.push(doc.data() as T));
 
-            return new DefaultResponse(objects);
+            if (objects) return new DefaultResponse(objects);
+            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar resultados que corresponda aos parâmetros fornecidos.");
         } catch (error) {
             throw error instanceof ErrorResponse ? error : new ErrorResponse();
         }
