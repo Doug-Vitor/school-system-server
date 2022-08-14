@@ -5,7 +5,7 @@ import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import Responses from '../../domain/Responses/Responses';
 
 import User from '../../domain/Entities/User';
-import { validatePassword, generateToken } from '../../services/AuthServices';
+import { generateToken } from '../../services/AuthServices';
 import UserServices from '../../services/UserServices';
 
 const router = express.Router();
@@ -15,12 +15,10 @@ router.post('/login', async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
 
-        const user = await repository.GetByUsername(username);
-        if (user && await validatePassword(password, user.Password)) {
-            res.send(new DefaultResponse(Responses.SUCCESS.StatusCode, Responses.SUCCESS.Message, {
-                token: generateToken(user.Id)
-            }));
-        } else res.send(new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Senha inválida"));
+        const user = await repository.ValidateLogin(username, password);
+        if (user) res.send(new DefaultResponse(Responses.SUCCESS.StatusCode, Responses.SUCCESS.Message, {
+            token: generateToken(user.Id)
+        }))
     } catch (error: ErrorResponse<unknown> | any) {
         res.status(error.StatusCode).send({ error });
     }
