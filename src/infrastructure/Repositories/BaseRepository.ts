@@ -38,6 +38,19 @@ export default class BaseRepository<T extends IBaseEntity> implements IBaseRepos
         }
     }
 
+
+    public async GetByField(fieldName: string, query: string): Promise<DefaultResponse<T[]>> {
+        try {
+            const objects: T[] = [];
+
+            (await this._firestore.GetDocsByField(fieldName, query)).docs.forEach(doc => objects.push(doc.data() as T));
+
+            return new DefaultResponse(objects);
+        } catch (error) {
+            throw error instanceof ErrorResponse ? error : new ErrorResponse();
+        }
+    }
+
     public async GetWithPagination(page?: number | undefined): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
