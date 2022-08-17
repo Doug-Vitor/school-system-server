@@ -19,8 +19,7 @@ export default class UserServices implements IUserServices {
     }
 
     private GetResponseWithToken(userId: string) {
-        const response = Responses.SUCCESS;
-        return new DefaultResponse<string>(response.StatusCode, response.Message, generateToken(userId));
+        return new DefaultResponse({ token: generateToken(userId) });
     }
 
     private ThrowBadRequest(errorMessage?: string) {
@@ -39,15 +38,15 @@ export default class UserServices implements IUserServices {
         throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um usuário com o nome de usuário fornecido");
     }
 
-    public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string>> {
+    public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
         const user = await this.GetByUsername(username);
         if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id);
         this.ThrowBadRequest("Senha inválida");
     }
 
-    public async CreateUser(user: User): Promise<DefaultResponse<string>> {
-        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");    
-    
+    public async CreateUser(user: User): Promise<DefaultResponse<string> | unknown> {
+        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+
         user.Password = await bcrypt.hash(user.Password, 1);
         const newUser = (await this._repository.Insert(user)).Data;
 

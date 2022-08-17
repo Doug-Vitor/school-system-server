@@ -10,7 +10,7 @@ const router = express.Router();
 const services = new UserServices();
 
 const sendErrorResponse = (error: ErrorResponse<unknown> | any, res: Response) => {
-    if (typeof error === typeof ErrorResponse) res.status(error.StatusCode).send({ error });
+    if (error.StatusCode) res.status(error.StatusCode).send({ error });
     else {
         const response = Responses.BAD_REQUEST_ERROR;
         res.status(response.StatusCode).send(new ErrorResponse(response.StatusCode, response.Message));
