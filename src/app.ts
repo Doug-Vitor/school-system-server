@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 
 import { json, urlencoded } from 'body-parser';
 import { setCors } from './application/middlewares/Headers';

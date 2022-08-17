@@ -1,9 +1,11 @@
 import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
 
-import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentData, DocumentSnapshot, QuerySnapshot, getFirestore } from 'firebase/firestore';
+import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentSnapshot, QuerySnapshot, getFirestore } from 'firebase/firestore';
 import { collection, doc, where, query, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 
 import { converter } from './Converters/DefaultConverter';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export default class Firestore<T> {
     private _database: FirestoreApp;
@@ -21,18 +23,11 @@ export default class Firestore<T> {
     }
 
     private InitializeFirestore() {
-        /* KNOWN ISSUE: customs environment variables is undefined (maybe the folder structuring?).
+        const { MAIN_DATABASE_KEY, MAIN_DATABASE_AUTH_DOMAIN, MAIN_DATABASE_PROJECT_ID} = process.env;
         const options: FirebaseOptions = {
-            apiKey: process.env.MAIN_DATABASE_KEY,
-            authDomain: process.env.MAIN_DATABASE_AUTH_DOMAIN,
-            projectId: process.env.MAIN_DATABASE_PROJECT_ID
-        };*/
-
-        // SHOULD NOT BE HERE!
-        const options: FirebaseOptions = {
-            apiKey: "AIzaSyCupPnvf3ipjjvFGY64ttJ1fIfnz-di7yI",
-            authDomain: "school-system-1914.firebaseapp.com",
-            projectId: "school-system-1914"
+            apiKey: MAIN_DATABASE_KEY,
+            authDomain: MAIN_DATABASE_AUTH_DOMAIN,
+            projectId: MAIN_DATABASE_PROJECT_ID
         };
 
         return getApps().length === 0 ? getFirestore(initializeApp(options)) : getFirestore(getApp());
