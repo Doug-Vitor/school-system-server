@@ -1,9 +1,0 @@
-{
-    "server": { "port": 3000 },
-    "firebase": {
-        "apiKey": "AIzaSyCupPnvf3ipjjvFGY64ttJ1fIfnz-di7yI",
-        "authDomain": "school-system-1914.firebaseapp.com",
-        "projectId": "school-system-1914"
-    },
-    "secret": "ef5ee25ff069ff01c979ecc3d7fdc728e2359ea6"
-}
