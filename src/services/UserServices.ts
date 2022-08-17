@@ -1,22 +1,31 @@
 
 import bcrypt from 'bcrypt';
 
+import User from "../domain/Entities/User";
+import IUserServices from '../domain/Services/IUserServices';
+
+import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
 import Responses from "../domain/Responses/Responses";
 
-import User from "../domain/Entities/User";
 import BaseRepository from "../infrastructure/Repositories/BaseRepository";
-import { validatePassword } from './AuthServices';
+import { generateToken, validatePassword } from './AuthServices';
 
-export default class UserServices {
+export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
 
     constructor() {
         this._repository = new BaseRepository<User>("users");
     }
 
+    private GetResponseWithToken(userId: string) {
+        const response = Responses.SUCCESS;
+        return new DefaultResponse<string>(response.StatusCode, response.Message, generateToken(userId));
+    }
+
     private ThrowBadRequest(errorMessage?: string) {
-        throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, errorMessage ?? Responses.BAD_REQUEST_ERROR.Message);
+        const response = Responses.BAD_REQUEST_ERROR;
+        throw new ErrorResponse(response.StatusCode, errorMessage ?? response.Message);
     }
 
     private async GetByUsernameWithoutThrow(username: string) {
@@ -24,26 +33,24 @@ export default class UserServices {
         if (matchedUsers && matchedUsers[0]) return matchedUsers[0];
     }
 
-    public async GetByEmail(email: string) {
-        const matchedUsers = (await this._repository.GetByField("Email", email)).Data;
-        if (matchedUsers) return matchedUsers[0];
-    }
-
-    public async GetByUsername(username: string) {
+    private async GetByUsername(username: string) {
         const user = await this.GetByUsernameWithoutThrow(username);
         if (user) return user;
         throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um usuário com o nome de usuário fornecido");
     }
 
-    public async ValidateLogin(username: string, password: string) {
+    public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string>> {
         const user = await this.GetByUsername(username);
-        if (user && await validatePassword(password, user.Password)) return user;
+        if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id);
         this.ThrowBadRequest("Senha inválida");
     }
 
-    public async CreateUser(user: User) {
-        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido")
+    public async CreateUser(user: User): Promise<DefaultResponse<string>> {
+        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");    
+    
         user.Password = await bcrypt.hash(user.Password, 1);
-        return await this._repository.Insert(user);
+        const newUser = (await this._repository.Insert(user)).Data;
+
+        if (newUser) return this.GetResponseWithToken(newUser.Id);
     }
 }
