@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
 import Responses from '../domain/Responses/Responses';
 
-import { secret } from '../../config.json';
+import { secretAccessToken } from '../../config.json';
 
 function isBearerToken(token?: string) {
     if (token) {
@@ -15,9 +15,9 @@ function isBearerToken(token?: string) {
     throw new ErrorResponse(Responses.UNAUTHORIZED_ERROR.StatusCode, "Token não fornecido");
 }
 
-const generateToken = (userId: string, expiresIn: number = 86000) => jwt.sign({ userId }, secret, { expiresIn });
+const generateToken = (userId: string, expiresIn: number = 86000) => jwt.sign({ userId }, secretAccessToken, { expiresIn });
 
-const validateToken = (headerToken?: string) => jwt.verify(isBearerToken(headerToken), secret, error => {
+const validateToken = (headerToken?: string) => jwt.verify(isBearerToken(headerToken), secretAccessToken, error => {
     if (error) throw new ErrorResponse(Responses.WRONG_CREDENTIALS_ERROR.StatusCode, "Token inválido");
     else return true;
 });
