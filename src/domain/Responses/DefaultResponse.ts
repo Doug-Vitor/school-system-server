@@ -5,7 +5,7 @@ export default class DefaultResponse<T> {
     public readonly Message: string;
     public readonly Data?: T;
 
-    constructor(statusCode?: number, message?: string, data?: T) {
+    constructor(data?: T, statusCode?: number, message?: string) {
         this.StatusCode = statusCode ?? Responses.SUCCESS.StatusCode;
         this.Message = message ?? Responses.SUCCESS.Message;
         this.Data = data;
