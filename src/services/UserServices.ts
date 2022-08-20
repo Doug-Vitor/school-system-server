@@ -23,8 +23,7 @@ export default class UserServices implements IUserServices {
     }
 
     private ThrowBadRequest(errorMessage?: string) {
-        const response = Responses.BAD_REQUEST_ERROR;
-        throw new ErrorResponse(response.StatusCode, errorMessage ?? response.Message);
+        throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, errorMessage);
     }
 
     private async GetByUsernameWithoutThrow(username: string) {
