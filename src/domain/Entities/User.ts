@@ -14,9 +14,6 @@ export default class User extends BaseEntity implements IUser {
     Username: string;
 
     @IsNotEmpty()
-    @IsString()
-    @MinLength(6)
-    @MaxLength(20)
     Password: string;
     
     constructor(email: string, username: string, password: string, id?: string) {
