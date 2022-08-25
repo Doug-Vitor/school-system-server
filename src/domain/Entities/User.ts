@@ -1,21 +1,21 @@
-import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from "class-validator";
 import BaseEntity from "./BaseEntity";
 import IUser from "./Interfaces/IUser";
 
+import { IsEmail, IsNotEmpty, IsString, Length } from "class-validator";
+import errors from '../../../errors.json';
+
 export default class User extends BaseEntity implements IUser {
-    @IsNotEmpty()
-    @IsEmail()
+    @IsNotEmpty({ message: errors["pt-br"].required, })
+    @IsEmail(null, { message: errors["pt-br"].invalid })
     Email: string;
-    
-    @IsNotEmpty()
-    @IsString()
-    @MinLength(6)
-    @MaxLength(20)
+
+    @IsString({ message: errors["pt-br"].invalid })
+    @Length(6, 20, { message: errors["pt-br"].usernameLength, })
     Username: string;
 
-    @IsNotEmpty()
+    @IsNotEmpty({ message: errors["pt-br"].requiredPassword, })
     Password: string;
-    
+
     constructor(email: string, username: string, password: string, id?: string) {
         super(id, new Date());
 

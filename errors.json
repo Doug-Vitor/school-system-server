@@ -1,0 +1,12 @@
+{
+    "pt-br": {
+        "required": "O campo $property é obrigatório.",
+        "requiredPassword": "O campo senha é obrigatório",
+        "invalid": "Por favor, forneça um $property válido.",
+        "invalidName": "Por favor, forneça um nome válido.",
+        "invalidBirthdate": "Por favor, forneça uma data de nascimento válida.",
+        "nameLength": "O nome deve conter entre $constraint1 e $constraint2 caracteres.",
+        "usernameLength": "O nome de usuário deve conter entre $constraint1 e $constraint2 caracteres."
+    },
+    "en-us": {}
+}
