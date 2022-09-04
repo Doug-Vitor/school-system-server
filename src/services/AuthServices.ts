@@ -9,9 +9,8 @@ import { secretAccessToken } from '../../config.json';
 function isBearerToken(token?: string) {
     if (token) {
         const parts = token.split(' ');
-        if (parts.length === 2 && !/^Bearer$/i.test(parts[0])) return parts[1];
+        if (parts.length === 2 && /^Bearer$/i.test(parts[0])) return parts[1];
     }
-
     throw new ErrorResponse(Responses.UNAUTHORIZED_ERROR.StatusCode, "Token não fornecido");
 }
 

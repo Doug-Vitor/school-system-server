@@ -1,9 +1,9 @@
 import express, { Request, Response, NextFunction } from 'express';
 
-import User from '../../domain/Entities/Authentication/User';
-import UserServices from '../../services/UserServices';
+import User from '../../../domain/Entities/Authentication/User';
+import UserServices from '../../../services/UserServices';
 
-import ErrorResponse from '../../domain/Responses/ErrorResponse';
+import ErrorResponse from '../../../domain/Responses/ErrorResponse';
 
 const router = express.Router();
 const services = new UserServices();

@@ -80,7 +80,6 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
     private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
-        console.log(error);
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
