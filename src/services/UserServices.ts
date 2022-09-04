@@ -11,11 +11,13 @@ import Responses from "../domain/Responses/Responses";
 import BaseRepository from "../infrastructure/Repositories/BaseRepository";
 import { generateToken, validatePassword } from './AuthServices';
 
+import { firebase } from '../../constants.json';
+
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
 
     constructor() {
-        this._repository = new BaseRepository<User>("users");
+        this._repository = new BaseRepository<User>(firebase.collectionNames.users);
     }
 
     private GetResponseWithToken(userId: string) {
@@ -27,7 +29,7 @@ export default class UserServices implements IUserServices {
     }
 
     private async GetByUsernameWithoutThrow(username: string) {
-        const matchedUsers = (await this._repository.GetByField("Username", username)).Data;
+        const matchedUsers = (await this._repository.GetByField("Username", username, {})).Data;
         if (matchedUsers && matchedUsers[0]) return matchedUsers[0];
     }
 

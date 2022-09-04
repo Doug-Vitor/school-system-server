@@ -1,7 +1,8 @@
 import BaseEntity from "../../domain/Entities/BaseEntity";
 
-import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
 import Firestore from "../Firestore";
+import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
+import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 
 import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
@@ -29,7 +30,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     public async GetById(id: string): Promise<DefaultResponse<T>> {
         try {
             this.ValidateId(id);
-            const object = (await this._firestore.GetDocById(id)).data() as T;
+            const object = (await this._firestore.GetDocById(id)).data();
 
             if (object) return new DefaultResponse(object);
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar nenhum resultado que corresponda ao identificador fornecido.");
@@ -37,24 +38,25 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
 
-    public async GetByField(fieldName: string, query: string): Promise<DefaultResponse<T[]>> {
+    public async GetByField(fieldName: string, query: string, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
+            
+            const response = await this._firestore.GetDocsByField(fieldName, query, pagination);
+            response.Documents.forEach(doc => objects.push(doc.data()));
 
-            (await this._firestore.GetDocsByField(fieldName, query)).docs.forEach(doc => objects.push(doc.data() as T));
-
-            if (objects) return new DefaultResponse(objects);
-            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar resultados que corresponda aos parâmetros fornecidos.");
+            return new DefaultResponse(objects, response.Pagination);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async GetWithPagination(page?: number | undefined): Promise<DefaultResponse<T[]>> {
+    public async GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
+            
+            const response = await this._firestore.GetDocs(pagination);
+            response.Documents.forEach(doc => objects.push(doc.data()));
 
-            (await this._firestore.GetDocs()).docs.forEach(doc => objects.push(doc.data() as T));
-
-            return new DefaultResponse(objects);
+            return new DefaultResponse(objects, response.Pagination);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
@@ -77,6 +79,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
     private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
+        console.log(error);
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
