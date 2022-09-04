@@ -1,4 +1,4 @@
-import IPerson from "./Interfaces/IPerson";
+import IPerson from "../Interfaces/Entities/IPerson";
 import BaseEntity from "./BaseEntity";
 
 import { IsDate, IsString, Length } from "class-validator";

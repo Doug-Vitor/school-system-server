@@ -1,5 +1,5 @@
-import IPaginationPayload from "../../Interfaces/Infrastructure/Pagination/IPaginationPayload";
-import DefaultResponse from "../../Responses/DefaultResponse";
+import IPaginationPayload from "../Pagination/IPaginationPayload";
+import DefaultResponse from "../../../Responses/DefaultResponse";
 
 export default interface IBaseRepository<T> {
     Insert(object: T): Promise<DefaultResponse<T>>
