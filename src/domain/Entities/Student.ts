@@ -1,4 +1,4 @@
-import IStudent from "./Interfaces/IStudent";
+import IStudent from "../Interfaces/Entities/IStudent";
 import Person from "./Person";
 
 export default class Student extends Person implements IStudent {

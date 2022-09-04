@@ -1,7 +1,7 @@
 import BaseEntity from "../../domain/Entities/BaseEntity";
 
 import Firestore from "../Firestore";
-import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
+import IBaseRepository from "../../domain/Interfaces/Infrastructure/Repositories/IBaseRepository";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 
 import Responses from "../../domain/Responses/Responses";

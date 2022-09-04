@@ -1,5 +1,5 @@
 import BaseEntity from "./BaseEntity";
-import IUser from "./Interfaces/IUser";
+import IUser from "../Interfaces/Entities/IUser";
 
 import { IsEmail, IsNotEmpty, IsString, Length} from "class-validator";
 import { errors } from '../../../constants.json';

@@ -2,7 +2,7 @@
 import bcrypt from 'bcrypt';
 
 import User from "../domain/Entities/User";
-import IUserServices from '../domain/Services/IUserServices';
+import IUserServices from '../domain/Interfaces/Services/IUserServices';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';

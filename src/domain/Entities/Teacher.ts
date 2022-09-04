@@ -1,4 +1,4 @@
-import ITeacher from "./Interfaces/ITeacher";
+import ITeacher from "../Interfaces/Entities/ITeacher";
 import Person from "./Person";
 
 export default class Teacher extends Person implements ITeacher {
