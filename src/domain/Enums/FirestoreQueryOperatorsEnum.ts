@@ -1,4 +1,4 @@
-enum FirestoreQueryOptionsEnum {
+enum FirestoreQueryOperatorsEnum {
     LessThan = "<",
     LessOrEqualsTo = "<=",
     EqualsTo = "==",
@@ -11,4 +11,4 @@ enum FirestoreQueryOptionsEnum {
     NotIn = "not-in"
 }
 
-export default FirestoreQueryOptionsEnum;
+export default FirestoreQueryOperatorsEnum;

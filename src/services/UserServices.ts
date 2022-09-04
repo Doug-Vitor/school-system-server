@@ -10,7 +10,7 @@ import Responses from "../domain/Responses/Responses";
 
 import BaseRepository from "../infrastructure/Repositories/BaseRepository";
 import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
-import FirestoreQueryOptionsEnum from '../domain/Enums/FirestoreQueryOptionsEnum';
+import FirestoreQueryOperatorsEnum from '../domain/Enums/FirestoreQueryOperatorsEnum';
 
 import { generateToken, validatePassword } from './AuthServices';
 import { firebase } from '../../constants.json';
@@ -33,7 +33,7 @@ export default class UserServices implements IUserServices {
     private async GetByUsernameWithoutThrow(username: string) {
         const searchPayload: IFirestoreSearchPayload = {
             FieldName: "Username",
-            OperatorString: FirestoreQueryOptionsEnum.EqualsTo,
+            OperatorString: FirestoreQueryOperatorsEnum.EqualsTo,
             SearchValue: username
         }
         const matchedUsers = (await this._repository.GetByField(searchPayload, {})).Data;
