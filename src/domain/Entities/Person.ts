@@ -2,7 +2,7 @@ import IPerson from "./Interfaces/IPerson";
 import BaseEntity from "./BaseEntity";
 
 import { IsDate, IsString, Length } from "class-validator";
-import errors from '../../../errors.json';
+import { errors } from '../../../constants.json';
 
 export default abstract class Person extends BaseEntity implements IPerson {
     @IsString({ message: errors["pt-br"].invalidName })

@@ -2,7 +2,7 @@ import BaseEntity from "./BaseEntity";
 import IUser from "./Interfaces/IUser";
 
 import { IsEmail, IsNotEmpty, IsString, Length } from "class-validator";
-import errors from '../../../errors.json';
+import { errors } from '../../../constants.json';
 
 export default class User extends BaseEntity implements IUser {
     @IsNotEmpty({ message: errors["pt-br"].required, })
