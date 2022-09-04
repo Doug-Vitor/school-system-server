@@ -2,7 +2,7 @@ import BaseEntity from "../../domain/Entities/BaseEntity";
 
 import Firestore from "../Firestore";
 import IBaseRepository from "../../domain/Repositories/Interfaces/IBaseRepository";
-import IPaginationParameters from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationParameters";
+import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 
 import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
@@ -38,24 +38,23 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
 
-    public async GetByField(fieldName: string, query: string, pagination: IPaginationParameters): Promise<DefaultResponse<T[]>> {
+    public async GetByField(fieldName: string, query: string, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
-
+            
             const response = await this._firestore.GetDocsByField(fieldName, query, pagination);
-            (await response.DocumentsSnapshot).docs.forEach(doc => objects.push(doc.data()));
+            response.Documents.forEach(doc => objects.push(doc.data()));
 
-            if (objects) return new DefaultResponse(objects, response.Pagination);
-            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar resultados que corresponda aos parâmetros fornecidos.");
+            return new DefaultResponse(objects, response.Pagination);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async GetWithPagination(pagination: IPaginationParameters): Promise<DefaultResponse<T[]>> {
+    public async GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
-
+            
             const response = await this._firestore.GetDocs(pagination);
-            (await response.DocumentsSnapshot).forEach(doc => objects.push(doc.data()));
+            response.Documents.forEach(doc => objects.push(doc.data()));
 
             return new DefaultResponse(objects, response.Pagination);
         } catch (error) { throw this.GetErrorObject(error) }

@@ -1,7 +1,7 @@
-import { QuerySnapshot } from "firebase/firestore";
+import { QueryDocumentSnapshot } from "firebase/firestore";
 import IPagination from "../Pagination/IPagination";
 
 export default interface IFirestorePaginationResponse<T> {
-    DocumentsSnapshot: Promise<QuerySnapshot<T>>,
+    Documents: QueryDocumentSnapshot<T>[],
     Pagination: IPagination
 }

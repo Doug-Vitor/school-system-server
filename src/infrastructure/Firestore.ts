@@ -1,12 +1,12 @@
 import BaseEntity from '../domain/Entities/BaseEntity';
 
 import IPagination from '../domain/Interfaces/Infrastructure/Pagination/IPagination';
-import IPaginationParameters from '../domain/Interfaces/Infrastructure/Pagination/IPaginationParameters';
+import IPaginationPayload from '../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload';
 import IFirestorePaginationResponse from '../domain/Interfaces/Infrastructure/Firestore/IFirestorePaginationResponse';
 
 import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
-import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentSnapshot, getFirestore, QueryConstraint, Query, DocumentData } from 'firebase/firestore';
-import { collection, doc, query, where, orderBy, startAt, limit, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
+import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentSnapshot, getFirestore, QueryConstraint, Query, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, doc, query, where, orderBy, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { converter } from './Converters/DefaultConverter';
 
 import { config } from 'dotenv';
@@ -42,8 +42,13 @@ export default class Firestore<T extends BaseEntity> {
         return doc(this._collection, id).withConverter(this._converter);
     }
 
-    private GetDefaultQuery(orderByField: string = "Id", queryConstraints: QueryConstraint[] = []): Query<T> {
-        return query(this._collection, orderBy(orderByField), ...queryConstraints).withConverter(this._converter);
+    private GetDefaultQuery(orderByField: string = "CreatedAt", queryConstraints: QueryConstraint[] = []): Query<T> {
+        queryConstraints.unshift(orderBy(orderByField));
+        return query(this._collection, ...queryConstraints).withConverter(this._converter);
+    }
+
+    private PaginateDocs(documentsSnapshot: QuerySnapshot<T>, page: number, itemsPerPage: number): QueryDocumentSnapshot<T>[] {
+        return documentsSnapshot.docs.slice((page - 1) * itemsPerPage, page * itemsPerPage);
     }
 
     public async AddDoc(data: T): Promise<DocumentReference> {
@@ -54,30 +59,27 @@ export default class Firestore<T extends BaseEntity> {
         return getDoc(doc(this._database, this._collectionName, id).withConverter(this._converter));
     }
 
-    public async GetDocsByField(fieldName: string, searchValue: string, pagination?: IPaginationParameters): Promise<IFirestorePaginationResponse<T>> {
-        const page = pagination?.Page ?? 1;
-        const itemsPerPage = pagination?.ItemsPerPage ?? 10;
+    public async GetDocsByField(fieldName: string, searchValue: string, pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
+        const page = pagination?.Page || 1;
+        const itemsPerPage = pagination?.ItemsPerPage || 10;
         const orderByField = pagination?.OrderByField;
-        
-        const sharedConstraints = [where(fieldName, "==", searchValue)];
-        const mainConstraints = [startAt((page - 1) * itemsPerPage), limit(itemsPerPage), ...sharedConstraints];
-        
+
+        const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField, [where(fieldName, "==", searchValue)]));
         return {
-            DocumentsSnapshot: getDocs(this.GetDefaultQuery(orderByField, mainConstraints)),
-            Pagination: this.GetPagination(page, itemsPerPage, (await getDocs(this.GetDefaultQuery(orderByField, sharedConstraints))).size)
+            Documents: this.PaginateDocs(documentsSnapshot, page, itemsPerPage),
+            Pagination: this.GetPagination(page, itemsPerPage, documentsSnapshot.size)
         }
     }
 
-    public async GetDocs(pagination?: IPaginationParameters): Promise<IFirestorePaginationResponse<T>> {
-        const page = pagination?.Page ?? 1;
-        const itemsPerPage = pagination?.ItemsPerPage ?? 10;
+    public async GetDocs(pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
+        const page = pagination?.Page || 1;
+        const itemsPerPage = pagination?.ItemsPerPage || 10;
         const orderByField = pagination?.OrderByField;
 
-        const mainConstraints = [startAt((page - 1) * itemsPerPage), limit(itemsPerPage)];
-        
+        const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField));
         return {
-            DocumentsSnapshot: getDocs(this.GetDefaultQuery(orderByField, mainConstraints)),
-            Pagination: this.GetPagination(page, itemsPerPage, (await getDocs(this.GetDefaultQuery(orderByField))).size)
+            Documents: this.PaginateDocs(documentsSnapshot, page, itemsPerPage),
+            Pagination: this.GetPagination(page, itemsPerPage, documentsSnapshot.size)
         };
     }
 
@@ -89,11 +91,11 @@ export default class Firestore<T extends BaseEntity> {
         return deleteDoc(this.GetDocRefById(id));
     }
 
-    private GetPagination(page: number, itemsPerPage: number, docsLength: number): IPagination {
+    private GetPagination(page: number, itemsPerPage: number, collectionSize: number): IPagination {
         return {
             CurrentPage: page,
             HasPreviousPage: page > 1,
-            HasNextPage: page * itemsPerPage < docsLength
+            HasNextPage: page * itemsPerPage < collectionSize
         }
     }
 }

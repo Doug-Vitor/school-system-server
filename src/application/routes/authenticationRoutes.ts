@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 
-import IPaginationParameters from '../../domain/Interfaces/Infrastructure/Pagination/IPaginationParameters';
+import IPaginationPayload from '../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload';
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 
 import User from '../../domain/Entities/User';
@@ -14,7 +14,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const page = req.query.page as unknown as number;
         const itemsPerPage = req.query.itemsPerPage as unknown as number;
-        const pagination: IPaginationParameters = {
+        const pagination: IPaginationPayload = {
             Page: page,
             ItemsPerPage: itemsPerPage
         }
