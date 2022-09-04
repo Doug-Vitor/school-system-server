@@ -10,6 +10,7 @@ import { collection, doc, query, where, orderBy, addDoc, getDoc, getDocs, update
 import { converter } from './Converters/DefaultConverter';
 
 import { config } from 'dotenv';
+import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 config();
 
 export default class Firestore<T extends BaseEntity> {
@@ -59,12 +60,14 @@ export default class Firestore<T extends BaseEntity> {
         return getDoc(doc(this._database, this._collectionName, id).withConverter(this._converter));
     }
 
-    public async GetDocsByField(fieldName: string, searchValue: string, pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
+    public async GetDocsByField(searchPayload: IFirestoreSearchPayload, pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
         const page = pagination?.Page || 1;
         const itemsPerPage = pagination?.ItemsPerPage || 10;
         const orderByField = pagination?.OrderByField;
 
-        const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField, [where(fieldName, "==", searchValue)]));
+        const queryConstraints = [where(searchPayload.FieldName, searchPayload.OperatorString, searchPayload.SearchValue)];
+        const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField, queryConstraints));
+
         return {
             Documents: this.PaginateDocs(documentsSnapshot, page, itemsPerPage),
             Pagination: this.GetPagination(page, itemsPerPage, documentsSnapshot.size)

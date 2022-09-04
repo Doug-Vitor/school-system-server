@@ -11,4 +11,4 @@ enum FirestoreQueryOptionsEnum {
     NotIn = "not-in"
 }
 
-export default FirestoreQueryOptionsEnum
+export default FirestoreQueryOptionsEnum;
