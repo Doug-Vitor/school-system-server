@@ -8,6 +8,7 @@ import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import { validateOrReject, ValidationError } from "class-validator";
+import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 
 export default class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> {
     private _firestore: Firestore<T>;
@@ -38,11 +39,11 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
 
-    public async GetByField(fieldName: string, query: string, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
+    public async GetByField(searchPayload: IFirestoreSearchPayload, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
             
-            const response = await this._firestore.GetDocsByField(fieldName, query, pagination);
+            const response = await this._firestore.GetDocsByField(searchPayload, pagination);
             response.Documents.forEach(doc => objects.push(doc.data()));
 
             return new DefaultResponse(objects, response.Pagination);

@@ -1,11 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 
-import IPaginationPayload from '../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload';
-import ErrorResponse from '../../domain/Responses/ErrorResponse';
-
 import User from '../../domain/Entities/User';
 import UserServices from '../../services/UserServices';
-import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
+
+import ErrorResponse from '../../domain/Responses/ErrorResponse';
+
 
 const router = express.Router();
 const services = new UserServices();
