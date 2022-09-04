@@ -14,6 +14,7 @@ import FirestoreQueryOperatorsEnum from '../domain/Enums/FirestoreQueryOperators
 
 import { generateToken, validatePassword } from './AuthServices';
 import { firebase } from '../../constants.json';
+import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
 
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
@@ -22,8 +23,11 @@ export default class UserServices implements IUserServices {
         this._repository = new BaseRepository<User>(firebase.collectionNames.users);
     }
 
-    private GetResponseWithToken(userId: string) {
-        return new DefaultResponse({ token: generateToken(userId) });
+    private GetResponseWithToken(userId: string): DefaultResponse<IAuthenticationInfos> {
+        return new DefaultResponse({
+            AuthenticatedUserId: userId,
+            GeneratedToken: generateToken(userId)
+        })
     }
 
     private ThrowBadRequest(errorMessage?: string) {
@@ -52,7 +56,7 @@ export default class UserServices implements IUserServices {
         this.ThrowBadRequest("Senha inválida");
     }
 
-    public async CreateUser(user: User): Promise<DefaultResponse<string> | unknown> {
+    public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
 
         user.Password = await bcrypt.hash(user.Password, 1);
