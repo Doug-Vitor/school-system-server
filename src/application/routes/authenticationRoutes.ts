@@ -5,7 +5,6 @@ import UserServices from '../../services/UserServices';
 
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 
-
 const router = express.Router();
 const services = new UserServices();
 
