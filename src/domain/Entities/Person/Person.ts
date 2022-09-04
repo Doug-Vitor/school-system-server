@@ -1,8 +1,8 @@
-import IPerson from "../Interfaces/Entities/IPerson";
-import BaseEntity from "./BaseEntity";
+import BaseEntity from "../BaseEntity";
+import IPerson from "../../Interfaces/Entities/Person/IPerson";
 
 import { IsDate, IsString, Length } from "class-validator";
-import { errors } from '../../../constants.json';
+import { errors } from '../../../../constants.json';
 
 export default abstract class Person extends BaseEntity implements IPerson {
     @IsString({ message: errors["pt-br"].invalidName })
@@ -12,8 +12,8 @@ export default abstract class Person extends BaseEntity implements IPerson {
     @IsDate({ message: errors["pt-br"].invalidBirthdate })
     Birthdate: Date;
 
-    constructor(name: string, birthdate: Date, id?: string) {
-        super(id);
+    constructor(name: string, birthdate: Date, createdAt?: Date, id?: string) {
+        super(id, createdAt);
 
         this.Name = name;
         this.Birthdate = birthdate;

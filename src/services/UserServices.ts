@@ -1,7 +1,7 @@
 
 import bcrypt from 'bcrypt';
 
-import User from "../domain/Entities/User";
+import User from "../domain/Entities/Authentication/User";
 import IUserServices from '../domain/Interfaces/Services/IUserServices';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';

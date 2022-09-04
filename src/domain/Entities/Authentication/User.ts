@@ -1,8 +1,8 @@
-import BaseEntity from "./BaseEntity";
-import IUser from "../Interfaces/Entities/IUser";
+import BaseEntity from "../BaseEntity";
+import IUser from "../../Interfaces/Entities/Authentication/IUser";
 
 import { IsEmail, IsNotEmpty, IsString, Length} from "class-validator";
-import { errors } from '../../../constants.json';
+import { errors } from '../../../../constants.json';
 
 export default class User extends BaseEntity implements IUser {
     @IsNotEmpty({ message: errors["pt-br"].required, })
@@ -16,8 +16,8 @@ export default class User extends BaseEntity implements IUser {
     @IsNotEmpty({ message: errors["pt-br"].requiredPassword, })
     Password: string;
 
-    constructor(email: string, username: string, password: string, id?: string) {
-        super(id, new Date());
+    constructor(email: string, username: string, password: string, createdAt?: Date, id?: string) {
+        super(id, createdAt);
 
         this.Email = email;
         this.Username = username;
