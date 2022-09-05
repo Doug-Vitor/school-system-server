@@ -9,12 +9,12 @@ import ErrorResponse from '../domain/Responses/ErrorResponse';
 import Responses from "../domain/Responses/Responses";
 
 import BaseRepository from "../infrastructure/Repositories/BaseRepository";
-import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 import FirestoreQueryOperatorsEnum from '../domain/Enums/FirestoreQueryOperatorsEnum';
+import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
+import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
 
 import { generateToken, validatePassword } from './AuthServices';
-import { firebase } from '../../constants.json';
-import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
+import { firebase } from '../domain/Constants';
 
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;

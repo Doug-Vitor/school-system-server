@@ -1,11 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { getPagination } from '../../helpers';
+import { getPaginationParams } from '../../helpers';
 
 import Subject from '../../../domain/Entities/Core/Subject';
 import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
+import { firebase } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Subject>(Subject.name + 's');
+const repository = new BaseRepository<Subject>(firebase.collectionNames.subjects);
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -16,7 +17,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.GetWithPagination(getPagination(req.query)));
+        res.send(await repository.GetWithPagination(getPaginationParams(req.query)));
     } catch (error) { next(error) }
 });
 
