@@ -47,7 +47,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
             response.Documents.forEach(doc => objects.push(doc.data()));
 
             return new DefaultResponse(objects, response.Pagination);
-        } catch (error) { throw this.GetErrorObject(error) }
+        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
     }
 
     public async GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
