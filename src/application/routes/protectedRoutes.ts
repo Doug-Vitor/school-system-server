@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express';
+import subjectsRoute from './subjects';
+
 import { WhereFilterOp } from 'firebase/firestore';
 
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
@@ -24,5 +26,7 @@ router.get('/', async (req: Request, res: Response) => {
 
     res.send(await new BaseRepository(collectionName as string).GetByField(searchPayload, paginationPayload));
 });
+
+router.use('/subjects', subjectsRoute);
 
 export default router;

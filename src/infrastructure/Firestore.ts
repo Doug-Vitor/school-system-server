@@ -106,7 +106,6 @@ export default class Firestore<T extends BaseEntity> {
     }
     
     private GetOrderByFieldString(searchingField: FieldPath | string, operatorString: string, orderBy?: string) {
-        //searchPayload.FieldName && searchPayload.OperatorString != '==' ? searchPayload.FieldName : pagination?.OrderByField;
         if (searchingField == orderBy) return undefined;
         else if (searchingField && operatorString != '==') return searchingField;
         else return orderBy;

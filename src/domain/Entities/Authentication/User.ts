@@ -5,11 +5,11 @@ import { IsEmail, IsNotEmpty, IsString, Length} from "class-validator";
 import { errors } from '../../../../constants.json';
 
 export default class User extends BaseEntity implements IUser {
-    @IsNotEmpty({ message: errors["pt-br"].required, })
-    @IsEmail({}, { message: errors["pt-br"].invalid })
+    @IsNotEmpty({ message: errors["pt-br"].requiredProperty, })
+    @IsEmail({}, { message: errors["pt-br"].invalidProperty })
     Email: string;
 
-    @IsString({ message: errors["pt-br"].invalid })
+    @IsString({ message: errors["pt-br"].invalidProperty })
     @Length(6, 20, { message: errors["pt-br"].usernameLength, })
     Username: string;
 

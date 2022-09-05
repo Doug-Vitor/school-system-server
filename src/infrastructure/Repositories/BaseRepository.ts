@@ -25,7 +25,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         try {
             await validateOrReject(object);
             return this.GetById((await this._firestore.AddDoc(object)).id);
-        } catch (error) { throw this.GetErrorObject(error) }
+        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
     }
 
     public async GetById(id: string): Promise<DefaultResponse<T>> {
@@ -65,7 +65,6 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         try {
             await validateOrReject(object);
             const updated = Object.assign({ ...(await this.GetById(id)).Data }, object);
-            if (id != updated.Id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Identificador fornecido não é idêntico ao identificador armazenado");
 
             this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);
