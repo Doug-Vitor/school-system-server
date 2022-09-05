@@ -25,7 +25,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         try {
             await validateOrReject(object);
             return this.GetById((await this._firestore.AddDoc(object)).id);
-        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
+        } catch (error) { throw this.GetErrorObject(error) }
     }
 
     public async GetById(id: string): Promise<DefaultResponse<T>> {

@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import { authenticationHelpers as helper } from '../../helpers';
 
 import User from '../../../domain/Entities/Authentication/User';
 import UserServices from '../../../services/UserServices';
@@ -10,14 +11,14 @@ const services = new UserServices();
 
 router.post('/login', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { username, password } = req.body;
+        const { username, password } = helper.getBodyForUserLogin(req.body);
         res.send(await services.ValidateLogin(username, password));
     } catch (error: ErrorResponse<unknown> | any) { next(error) }
 });
 
 router.post('/signup', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { email, username, password } = req.body;
+        const { email, username, password } = helper.getBodyForUserSignup(req.body);
         res.send(await services.CreateUser(new User(email, username, password)));
     } catch (error: ErrorResponse<unknown> | any) { next(error) }
 });

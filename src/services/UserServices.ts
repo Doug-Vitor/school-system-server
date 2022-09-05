@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 import User from "../domain/Entities/Authentication/User";
 import IUserServices from '../domain/Interfaces/Services/IUserServices';
+import { validateOrReject } from 'class-validator';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
@@ -57,11 +58,13 @@ export default class UserServices implements IUserServices {
     }
 
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
-        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+        try {
+            if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
 
-        user.Password = await bcrypt.hash(user.Password, 1);
-        const newUser = (await this._repository.Insert(user)).Data;
+            user.Password = await bcrypt.hash(user.Password, 1);
+            const newUser = (await this._repository.Insert(user)).Data;
 
-        if (newUser) return this.GetResponseWithToken(newUser.Id);
+            if (newUser) return this.GetResponseWithToken(newUser.Id);
+        } catch (error) { console.log(error); throw error }
     }
 }
