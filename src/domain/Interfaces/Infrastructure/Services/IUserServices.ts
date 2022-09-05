@@ -1,4 +1,4 @@
-import User from "../../../Entities/User";
+import User from "../../../Entities/Authentication/User";
 import DefaultResponse from "../../../Responses/DefaultResponse";
 
 export default interface IUserServices {

@@ -1,7 +1,7 @@
 import express, { Express } from 'express';
 
 import { json, urlencoded } from 'body-parser';
-import { setCors } from './application/middlewares/Headers';
+import { setCors } from './application/middlewares/headers';
 
 import routes from './application/routes';
 import errorHandler from './application/middlewares/errorHandler';

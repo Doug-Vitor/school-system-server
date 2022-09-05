@@ -5,7 +5,7 @@ import IPaginationPayload from '../domain/Interfaces/Infrastructure/Pagination/I
 import IFirestorePaginationResponse from '../domain/Interfaces/Infrastructure/Firestore/IFirestorePaginationResponse';
 
 import { FirebaseOptions, getApp, getApps, initializeApp } from 'firebase/app';
-import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentSnapshot, getFirestore, QueryConstraint, Query, QuerySnapshot, QueryDocumentSnapshot } from 'firebase/firestore';
+import { Firestore as FirestoreApp, CollectionReference, DocumentReference, DocumentSnapshot, getFirestore, QueryConstraint, Query, QuerySnapshot, QueryDocumentSnapshot, FieldPath } from 'firebase/firestore';
 import { collection, doc, query, where, orderBy, addDoc, getDoc, getDocs, updateDoc, deleteDoc } from 'firebase/firestore';
 import { converter } from './Converters/DefaultConverter';
 
@@ -43,7 +43,7 @@ export default class Firestore<T extends BaseEntity> {
         return doc(this._collection, id).withConverter(this._converter);
     }
 
-    private GetDefaultQuery(orderByField: string = "CreatedAt", queryConstraints: QueryConstraint[] = []): Query<T> {
+    private GetDefaultQuery(orderByField: string | FieldPath = "CreatedAt", queryConstraints: QueryConstraint[] = []): Query<T> {
         queryConstraints.unshift(orderBy(orderByField));
         return query(this._collection, ...queryConstraints).withConverter(this._converter);
     }
@@ -63,42 +63,51 @@ export default class Firestore<T extends BaseEntity> {
     public async GetDocsByField(searchPayload: IFirestoreSearchPayload, pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
         const page = pagination?.Page || 1;
         const itemsPerPage = pagination?.ItemsPerPage || 10;
-        const orderByField = pagination?.OrderByField;
-
-        const queryConstraints = [where(searchPayload.FieldName, searchPayload.OperatorString, searchPayload.SearchValue)];
+        const orderByField = this.GetOrderByFieldString(searchPayload.FieldName, searchPayload.OperatorString, pagination?.OrderByField);
+        
+        
+        const queryConstraints: QueryConstraint[] = [];
+        if (searchPayload.FieldName && searchPayload.SearchValue)
+        queryConstraints.push(where(searchPayload.FieldName, searchPayload.OperatorString || '==', searchPayload.SearchValue));
+        
         const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField, queryConstraints));
-
         return {
             Documents: this.PaginateDocs(documentsSnapshot, page, itemsPerPage),
             Pagination: this.GetPagination(page, itemsPerPage, documentsSnapshot.size)
         }
     }
-
+    
     public async GetDocs(pagination?: IPaginationPayload): Promise<IFirestorePaginationResponse<T>> {
         const page = pagination?.Page || 1;
         const itemsPerPage = pagination?.ItemsPerPage || 10;
         const orderByField = pagination?.OrderByField;
-
+        
         const documentsSnapshot = await getDocs(this.GetDefaultQuery(orderByField));
         return {
             Documents: this.PaginateDocs(documentsSnapshot, page, itemsPerPage),
             Pagination: this.GetPagination(page, itemsPerPage, documentsSnapshot.size)
         };
     }
-
+    
     public async UpdateDoc(id: string, data: {}): Promise<void> {
         return updateDoc(this.GetDocRefById(id), data);
     }
-
+    
     public DeleteDoc(id: string): Promise<void> {
         return deleteDoc(this.GetDocRefById(id));
     }
-
+    
     private GetPagination(page: number, itemsPerPage: number, collectionSize: number): IPagination {
         return {
             CurrentPage: page,
             HasPreviousPage: page > 1,
             HasNextPage: page * itemsPerPage < collectionSize
         }
+    }
+    
+    private GetOrderByFieldString(searchingField: FieldPath | string, operatorString: string, orderBy?: string) {
+        if (searchingField == orderBy) return undefined;
+        else if (searchingField && operatorString != '==') return searchingField;
+        else return orderBy;
     }
 }

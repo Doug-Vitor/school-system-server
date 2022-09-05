@@ -1,19 +1,21 @@
 
 import bcrypt from 'bcrypt';
 
-import User from "../domain/Entities/User";
+import User from "../domain/Entities/Authentication/User";
 import IUserServices from '../domain/Interfaces/Services/IUserServices';
+import { validateOrReject } from 'class-validator';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
 import Responses from "../domain/Responses/Responses";
 
 import BaseRepository from "../infrastructure/Repositories/BaseRepository";
-import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 import FirestoreQueryOperatorsEnum from '../domain/Enums/FirestoreQueryOperatorsEnum';
+import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
+import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
 
 import { generateToken, validatePassword } from './AuthServices';
-import { firebase } from '../../constants.json';
+import { firebase } from '../domain/Constants';
 
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
@@ -22,8 +24,11 @@ export default class UserServices implements IUserServices {
         this._repository = new BaseRepository<User>(firebase.collectionNames.users);
     }
 
-    private GetResponseWithToken(userId: string) {
-        return new DefaultResponse({ token: generateToken(userId) });
+    private GetResponseWithToken(userId: string): DefaultResponse<IAuthenticationInfos> {
+        return new DefaultResponse({
+            AuthenticatedUserId: userId,
+            GeneratedToken: generateToken(userId)
+        })
     }
 
     private ThrowBadRequest(errorMessage?: string) {
@@ -52,12 +57,14 @@ export default class UserServices implements IUserServices {
         this.ThrowBadRequest("Senha inválida");
     }
 
-    public async CreateUser(user: User): Promise<DefaultResponse<string> | unknown> {
-        if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+    public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
+        try {
+            if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
 
-        user.Password = await bcrypt.hash(user.Password, 1);
-        const newUser = (await this._repository.Insert(user)).Data;
+            user.Password = await bcrypt.hash(user.Password, 1);
+            const newUser = (await this._repository.Insert(user)).Data;
 
-        if (newUser) return this.GetResponseWithToken(newUser.Id);
+            if (newUser) return this.GetResponseWithToken(newUser.Id);
+        } catch (error) { console.log(error); throw error }
     }
 }

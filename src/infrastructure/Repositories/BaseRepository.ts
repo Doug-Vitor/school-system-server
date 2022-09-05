@@ -47,7 +47,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
             response.Documents.forEach(doc => objects.push(doc.data()));
 
             return new DefaultResponse(objects, response.Pagination);
-        } catch (error) { throw this.GetErrorObject(error) }
+        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
     }
 
     public async GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
@@ -65,7 +65,6 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         try {
             await validateOrReject(object);
             const updated = Object.assign({ ...(await this.GetById(id)).Data }, object);
-            if (id != updated.Id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Identificador fornecido não é idêntico ao identificador armazenado");
 
             this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);
@@ -80,7 +79,6 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
     private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
-        console.log(error);
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
