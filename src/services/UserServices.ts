@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 
 import User from "../domain/Entities/Authentication/User";
 import IUserServices from '../domain/Interfaces/Services/IUserServices';
-import { validateOrReject } from 'class-validator';
+import { validate, validateOrReject } from 'class-validator';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
@@ -52,9 +52,12 @@ export default class UserServices implements IUserServices {
     }
 
     public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
-        const user = await this.GetByUsername(username);
-        if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id);
-        this.ThrowBadRequest("Senha inválida");
+        if (username && password) {
+            const user = await this.GetByUsername(username);
+            if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id);
+            this.ThrowBadRequest("Senha inválida");
+        }
+        else this.ThrowBadRequest("Por favor, preencha todos os campos");
     }
 
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {

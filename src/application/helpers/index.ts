@@ -3,8 +3,6 @@ import { WhereFilterOp } from "firebase/firestore";
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload"
 
-import * as authenticationHelpers from "./authentication/index";
-
 const getPaginationParams = (queryParams: any): IPaginationPayload => {
     const { page, itemsPerPage, orderByField } = queryParams;
 
@@ -25,4 +23,4 @@ const getSearchParams = (queryParams: any): IFirestoreSearchPayload => {
     }
 }
 
-export { getPaginationParams, getSearchParams, authenticationHelpers }
+export { getPaginationParams, getSearchParams }
