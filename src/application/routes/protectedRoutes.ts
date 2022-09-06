@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express';
+
 import subjectsRoute from './subjects';
+import classroomsRoute from './classrooms';
 
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
 import { getPaginationParams, getSearchParams } from '../helpers';
@@ -14,5 +16,6 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.use('/subjects', subjectsRoute);
+router.use('/classrooms', classroomsRoute);
 
 export default router;

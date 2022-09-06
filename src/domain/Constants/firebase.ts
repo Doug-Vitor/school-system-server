@@ -1,6 +1,7 @@
 const collectionNames = {
     users: "Users",
-    subjects: "Subjects"
+    subjects: "Subjects",
+    classrooms: "Classrooms"
 }
 
 export { collectionNames }

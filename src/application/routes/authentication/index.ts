@@ -4,8 +4,6 @@ import User from '../../../domain/Entities/Authentication/User';
 import UserServices from '../../../services/UserServices';
 
 import ErrorResponse from '../../../domain/Responses/ErrorResponse';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
-import Student from '../../../domain/Entities/Person/Student';
 
 const router = express.Router();
 const services = new UserServices();

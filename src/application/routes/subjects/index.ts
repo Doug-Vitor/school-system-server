@@ -3,10 +3,10 @@ import { getPaginationParams } from '../../helpers';
 
 import Subject from '../../../domain/Entities/Core/Subject';
 import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
-import { firebase } from '../../../domain/Constants';
+import { collectionNames } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Subject>(firebase.collectionNames.subjects);
+const repository = new BaseRepository<Subject>(collectionNames.subjects);
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
