@@ -1,3 +1,4 @@
 export default interface IClassroom {
-    Description: string
+    Room: string
+    MaxLength: number
 }

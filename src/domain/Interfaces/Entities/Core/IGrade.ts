@@ -3,6 +3,7 @@ export default interface IGrade {
     StudentId: string
     
     Year: number
+    AcademicYear: number
     Grades: Array<number>
     IsApproved: boolean 
 }
