@@ -2,17 +2,21 @@ import IGrade from "../../Interfaces/Entities/Core/IGrade";
 import BaseEntity from "../BaseEntity";
 
 export default class Grade extends BaseEntity implements IGrade {
-    SubjectId: string;
-    StudentId: string;
-    Year: number;
-    Grades: number[];
-    IsApproved: boolean;
+    public SubjectId: string;
+    public StudentId: string;
+     
+    public AcademicYear: number;
+    public Year: number;
+    public Grades: number[];
+    public IsApproved: boolean;
 
-    constructor(subjectId: string, studentId: string, year: number, grades: number[], createdAt?: Date, id?: string) {
+    constructor(subjectId: string, studentId: string, academicYear: number, year: number, grades: number[], createdAt?: Date, id?: string) {
         super(id, createdAt);
 
         this.SubjectId = subjectId;
         this.StudentId = studentId;
+
+        this.AcademicYear = academicYear;
         this.Year = year;
         this.Grades = grades;
         this.IsApproved = this.GetStudentResult();

@@ -68,6 +68,6 @@ export default class UserServices implements IUserServices {
             const newUser = (await this._repository.Insert(user)).Data;
 
             if (newUser) return this.GetResponseWithToken(newUser.Id);
-        } catch (error) { console.log(error); throw error }
+        } catch (error) { throw error }
     }
 }
