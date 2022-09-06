@@ -2,11 +2,13 @@ import BaseEntity from "../BaseEntity";
 import IClassroom from "../../Interfaces/Entities/Core/IClassroom";
 
 export default class Classroom extends BaseEntity implements IClassroom {
-    public Description: string;
+    public Room: string;
+    public MaxLength: number;
 
-    constructor(description: string, createdAt?: Date, id?: string) {
+    constructor(room: string, maxLength: number, createdAt?: Date, id?: string) {
         super(id, createdAt);
-
-        this.Description = description;
+        
+        this.Room = room;
+        this.MaxLength = maxLength;
     }
 }

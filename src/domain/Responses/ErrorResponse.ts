@@ -13,4 +13,9 @@ export default class DefaultResponse<T> extends Error {
         this.Message = message ?? error.Message;
         this.Data = data;
     }
+
+    static BadRequest(data?: {}) {
+        const response = Responses.BAD_REQUEST_ERROR;
+        return new DefaultResponse(response.StatusCode, response.Message, data);
+    }
 }
