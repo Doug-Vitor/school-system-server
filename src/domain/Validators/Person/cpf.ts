@@ -2,7 +2,7 @@ import { ValidationOptions, buildMessage, ValidateBy } from 'class-validator';
 
 const validateCpf = (value: string): boolean => {
     if (value && value.length === 14) {
-        const [dot1, dot2, hyphen] = [value.substring(3), value.substring(8), value.substring(11)]
+        const [dot1, dot2, hyphen] = [value.substring(3).at(0), value.substring(7).at(0), value.substring(11).at(0)]
         return (dot1 && dot2) === "." && hyphen === "-";
     }
     

@@ -2,7 +2,7 @@ import { ValidationOptions, buildMessage, ValidateBy } from 'class-validator';
 
 const validateCep = (value: string): boolean => {
     return value && value.length === 9 ?
-        value.substring(5) === "-" && value.replace(/\D/g, "").length === 8
+        value.substring(5).at(0) === "-" && value.replace(/\D/g, "").length === 8
         : false;
 }
 

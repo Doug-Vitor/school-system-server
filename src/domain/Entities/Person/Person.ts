@@ -16,7 +16,7 @@ export default abstract class Person extends BaseEntity implements IPerson {
 
     @IsCpf({ message: errors.getInvalidPropertyErrorString("CPF") }) public RealId: string;
     @IsPhoneNumber("BR", { message: errors.getInvalidPropertyErrorString("Número de telefone") }) public PhoneNumber: string
-    @IsCep({ message: errors.getInvalidPropertyErrorString("CEP") }) public Zipcode: string;
+    @IsCep({ message: errors.getInvalidPropertyErrorString("CEP") }) public ZipCode: string;
 
     constructor(name: string, birthdate: Date, phoneNumber: string, realId: string, zipcode: string, createdAt?: Date, id?: string) {
         super(id, createdAt);
@@ -26,6 +26,6 @@ export default abstract class Person extends BaseEntity implements IPerson {
 
         this.PhoneNumber = phoneNumber;
         this.RealId = realId;
-        this.Zipcode = zipcode;
+        this.ZipCode = zipcode;
     }
 }

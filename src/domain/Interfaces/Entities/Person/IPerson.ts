@@ -3,5 +3,5 @@ export default interface IPerson {
     Birthdate: Date
     PhoneNumber: string
     RealId: string
-    Zipcode: string
+    ZipCode: string
 }
