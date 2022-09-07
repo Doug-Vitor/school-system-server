@@ -1,29 +1,30 @@
+import { IsNumber } from "class-validator";
+import { getInvalidPropertyErrorString } from "../../Constants";
 import IGrade from "../../Interfaces/Entities/Core/IGrade";
+import StudentApproval from '../../Types/Grades/StudentApproval';
 import BaseEntity from "../BaseEntity";
 
 export default class Grade extends BaseEntity implements IGrade {
     public SubjectId: string;
     public StudentId: string;
-     
+
+    @IsNumber({ allowNaN: false }, { message: getInvalidPropertyErrorString("Série escolar") })
     public AcademicYear: number;
+
+    @IsNumber({ allowNaN: false }, { message: getInvalidPropertyErrorString("Ano") })
     public Year: number;
     public Grades: number[];
-    public IsApproved: boolean;
+    public IsApproved: StudentApproval;
 
-    constructor(subjectId: string, studentId: string, academicYear: number, year: number, grades: number[], createdAt?: Date, id?: string) {
+    constructor(subjectId: string, studentId: string, academicYear: number, year: number, grades: number[], isApproved?: StudentApproval, createdAt?: Date, id?: string) {
         super(id, createdAt);
 
         this.SubjectId = subjectId;
         this.StudentId = studentId;
 
-        this.AcademicYear = academicYear;
-        this.Year = year;
+        this.AcademicYear = academicYear < 10 ? academicYear : NaN;
+        this.Year = year > 2000 && year <= new Date().getFullYear() ? year : NaN;
         this.Grades = grades;
-        this.IsApproved = this.GetStudentResult();
-    }
-
-    private GetStudentResult() {
-        return new Date().getFullYear() > this.Year && this.Grades.length ? 
-            this.Grades.reduce((previousGrade, currentGrade) => previousGrade + currentGrade) / this.Grades.length > 7 : false;
+        this.IsApproved = isApproved ?? "Pendente";
     }
 }
