@@ -23,6 +23,14 @@ export default class UserServices implements IUserServices {
         this._repository = new BaseRepository<User>(collectionNames.users);
     }
 
+    private GetDefaultSearchPayload(username: string): IFirestoreSearchPayload {
+        return {
+            FieldName: "Username",
+            OperatorString: FirestoreQueryOperatorsEnum.EqualsTo,
+            SearchValue: username
+        }
+    }
+
     private GetResponseWithToken(userId: string): DefaultResponse<IAuthenticationInfos> {
         return new DefaultResponse({
             AuthenticatedUserId: userId,
@@ -34,18 +42,8 @@ export default class UserServices implements IUserServices {
         throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, errorMessage);
     }
 
-    private async GetByUsernameWithoutThrow(username: string) {
-        const searchPayload: IFirestoreSearchPayload = {
-            FieldName: "Username",
-            OperatorString: FirestoreQueryOperatorsEnum.EqualsTo,
-            SearchValue: username
-        };
-
-        return (await this._repository.GetByField(searchPayload, {})).data[0];
-    }
-
     private async GetByUsername(username: string) {
-        const user = await this.GetByUsernameWithoutThrow(username);
+        const user = (await this._repository.GetByField(this.GetDefaultSearchPayload(username), {})).data[0];
         if (user) return user;
         throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um usuário com o nome de usuário fornecido");
     }
@@ -61,12 +59,11 @@ export default class UserServices implements IUserServices {
 
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         try {
-            if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
-
+            if (await this._repository.EnsureExists(this.GetDefaultSearchPayload(user.Username)))
+                this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+            
             user.Password = await bcrypt.hash(user.Password, 1);
-            const newUser = (await this._repository.Insert(user)).data;
-
-            if (newUser) return this.GetResponseWithToken(newUser.Id);
+            return this.GetResponseWithToken((await this._repository.Insert(user)).data.Id);
         } catch (error) { throw error }
     }
 }

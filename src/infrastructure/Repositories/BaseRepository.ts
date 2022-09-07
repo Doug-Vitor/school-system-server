@@ -78,6 +78,11 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
+    public async EnsureExists(searchPayload: IFirestoreSearchPayload): Promise<boolean> {
+        searchPayload.OperatorString = "==";
+        return (await this._firestore.GetDocsByField(searchPayload)).Documents.length > 0;
+    }
+
     private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
