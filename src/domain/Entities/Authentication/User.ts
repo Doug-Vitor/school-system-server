@@ -13,8 +13,7 @@ export default class User extends BaseEntity implements IUser {
     @Length(6, 20, { message: getLengthErrorString("Nome de usuário"), })
     Username: string;
 
-    @IsNotEmpty({ message: getInvalidPropertyErrorString("Senha"), })
-    Password: string;
+    @IsNotEmpty({ message: getInvalidPropertyErrorString("Senha"), }) Password: string;
 
     constructor(email: string, username: string, password: string, createdAt?: Date, id?: string) {
         super(id, createdAt);

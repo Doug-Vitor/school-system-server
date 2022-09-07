@@ -4,6 +4,7 @@ import Firestore from "../Firestore";
 import IBaseRepository from "../../domain/Interfaces/Infrastructure/Repositories/IBaseRepository";
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
+import { getIdNotProvidedErrorString, getNotFoundErrorString } from "../../domain/Constants";
 
 import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
@@ -18,7 +19,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     }
 
     private ValidateId(id: string) {
-        if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, "Forneça um identificador (ID) válido.");
+        if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, getIdNotProvidedErrorString());
     }
 
     public async Insert(object: T): Promise<DefaultResponse<T>> {
@@ -34,7 +35,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
             const object = (await this._firestore.GetDocById(id)).data();
 
             if (object) return new DefaultResponse(object);
-            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar nenhum resultado que corresponda ao identificador fornecido.");
+            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
