@@ -8,7 +8,7 @@ import { collectionNames } from '../../../domain/Constants';
 const router = express.Router();
 const repository = new BaseRepository<Teacher>(collectionNames.teachers);
 
-const getAll = async (req: Request, res: Response, next: NextFunction) => {
+export async function getAll(req: Request, res: Response, next: NextFunction) {
     try {
         res.send(await repository.GetWithPagination(getPaginationParams(req.params)));
     } catch (error) { next(error) }
@@ -34,5 +34,4 @@ router.patch('/', async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) { next(error) }
 });
 
-export { getAll }
 export default router;

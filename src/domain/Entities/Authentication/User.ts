@@ -14,12 +14,14 @@ export default class User extends BaseEntity implements IUser {
     Username: string;
 
     @IsNotEmpty({ message: getInvalidPropertyErrorString("Senha"), }) Password: string;
+    public IsAdmin: boolean;
 
-    constructor(email: string, username: string, password: string, createdAt?: Date, id?: string) {
+    constructor(email: string, username: string, password: string, isAdmin: boolean = false, createdAt?: Date, id?: string) {
         super(id, createdAt);
 
         this.Email = email;
         this.Username = username;
         this.Password = password;
+        this.IsAdmin = isAdmin;
     }
 }
