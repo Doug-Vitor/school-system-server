@@ -11,8 +11,7 @@ export default abstract class Person extends BaseEntity implements IPerson {
     @Length(3, 100, { message: getLengthErrorString("Nome") })
     Name: string;
 
-    @IsDate({ message: getInvalidPropertyErrorString("Data de nascimento") })
-    Birthdate: Date;
+    @IsDate({ message: getInvalidPropertyErrorString("Data de nascimento") }) Birthdate: Date;
 
     @IsCpf({ message: getInvalidPropertyErrorString("CPF") }) public RealId: string;
     @IsPhoneNumber("BR", { message: getInvalidPropertyErrorString("Número de telefone") }) public PhoneNumber: string
