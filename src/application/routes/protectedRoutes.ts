@@ -1,7 +1,8 @@
 import express, { Request, Response } from 'express';
 
-import subjectsRoute from './subjects';
-import classroomsRoute from './classrooms';
+import subjectsRoutes from './subjects';
+import classroomsRoutes from './classrooms';
+import teachersRoutes from './teachers';
 
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
 import { getPaginationParams, getSearchParams } from '../helpers';
@@ -12,10 +13,12 @@ router.get('/', async (req: Request, res: Response) => {
     const { collectionName } = req.query;
 
     const [searchPayload, paginationPayload] = [getSearchParams(req.query), getPaginationParams(req.query)];
+    console.log(paginationPayload)
     res.send(await new BaseRepository(collectionName as string).GetByField(searchPayload, paginationPayload));
 });
 
-router.use('/subjects', subjectsRoute);
-router.use('/classrooms', classroomsRoute);
+router.use('/subjects', subjectsRoutes);
+router.use('/classrooms', classroomsRoutes);
+router.use('/teacher', teachersRoutes);
 
 export default router;

@@ -1,4 +1,6 @@
 import { WhereFilterOp } from "firebase/firestore";
+import Person from "../../domain/Entities/Person/Person";
+import Teacher from "../../domain/Entities/Person/Teacher";
 
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload"
@@ -23,4 +25,28 @@ const getSearchParams = (queryParams: any): IFirestoreSearchPayload => {
     }
 }
 
-export { getPaginationParams, getSearchParams }
+const getPersonFromBody = (body: Record<string, any>): Person => {
+    const { name, birthdate, zipCode, phoneNumber, realId } = body;
+    return {
+        Id: '',
+        CreatedAt: new Date(),
+        Name: name,
+        Birthdate: birthdate,
+        ZipCode: zipCode,
+        PhoneNumber: phoneNumber,
+        RealId: realId
+    }
+}
+
+const getTeacherFromBody = (body: Record<string, any>, ownerUserId: string): Teacher => {
+    const teacher = getPersonFromBody(body) as Teacher;
+
+    const { subjectsIds, classroomsIds } = body;
+    teacher.SubjectsIds = subjectsIds;
+    teacher.ClassroomsIds = classroomsIds;
+
+    teacher.UserId = ownerUserId;
+    return teacher;
+}
+
+export { getPaginationParams, getSearchParams, getPersonFromBody, getTeacherFromBody }
