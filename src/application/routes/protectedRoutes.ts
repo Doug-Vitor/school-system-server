@@ -1,9 +1,10 @@
 import express, { Request, Response } from 'express';
 
+import { routes } from '../../domain/Constants';
 import subjectsRoutes from './subjects';
 import classroomsRoutes from './classrooms';
 import teachersRoutes from './teachers';
-import { routes } from '../../domain/Constants';
+import studentsRoutes from './students';
 
 import BaseRepository from '../../infrastructure/Repositories/BaseRepository';
 import { getPaginationParams, getSearchParams, } from '../helpers';
@@ -20,5 +21,6 @@ router.get('/', async (req: Request, res: Response) => {
 router.use(routes.subjects, subjectsRoutes);
 router.use(routes.classrooms, classroomsRoutes);
 router.use(routes.teachers, teachersRoutes);
+router.use(routes.students, studentsRoutes);
 
 export default router;
