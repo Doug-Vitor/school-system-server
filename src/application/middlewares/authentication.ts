@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { validateToken } from '../../services/AuthServices';
+import { validateToken } from '../../services/Users/AuthServices';
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 
 export function ensureIsAdmin(req: Request, _: Response, next: NextFunction) {

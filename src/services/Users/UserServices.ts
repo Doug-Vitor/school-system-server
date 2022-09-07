@@ -1,20 +1,20 @@
 
 import bcrypt from 'bcrypt';
 
-import User from "../domain/Entities/Authentication/User";
-import IUserServices from '../domain/Interfaces/Services/IUserServices';
+import User from "../../domain/Entities/Authentication/User";
+import IUserServices from '../../domain/Interfaces/Services/IUserServices';
 
-import DefaultResponse from '../domain/Responses/DefaultResponse';
-import ErrorResponse from '../domain/Responses/ErrorResponse';
-import Responses from "../domain/Responses/Responses";
+import DefaultResponse from '../../domain/Responses/DefaultResponse';
+import ErrorResponse from '../../domain/Responses/ErrorResponse';
+import Responses from "../../domain/Responses/Responses";
 
-import BaseRepository from "../infrastructure/Repositories/BaseRepository";
-import FirestoreQueryOperatorsEnum from '../domain/Enums/FirestoreQueryOperatorsEnum';
-import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
-import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
+import BaseRepository from "../../infrastructure/Repositories/BaseRepository";
+import FirestoreQueryOperatorsEnum from '../../domain/Enums/FirestoreQueryOperatorsEnum';
+import IFirestoreSearchPayload from '../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
+import IAuthenticationInfos from '../../domain/Interfaces/Responses/IAuthenticationInfos';
 
 import { generateToken, validatePassword } from './AuthServices';
-import { collectionNames } from '../domain/Constants';
+import { collectionNames } from '../../domain/Constants';
 
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
