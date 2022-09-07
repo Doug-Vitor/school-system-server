@@ -31,10 +31,10 @@ export default class UserServices implements IUserServices {
         }
     }
 
-    private GetResponseWithToken(userId: string): DefaultResponse<IAuthenticationInfos> {
+    private GetResponseWithToken(userId: string, isAdmin: boolean): DefaultResponse<IAuthenticationInfos> {
         return new DefaultResponse({
             AuthenticatedUserId: userId,
-            GeneratedToken: generateToken(userId)
+            GeneratedToken: generateToken({ UserId: userId, IsAdmin: isAdmin })
         })
     }
     
@@ -47,7 +47,7 @@ export default class UserServices implements IUserServices {
     public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
         if (username && password) {
             const user = await this.GetByUsername(username);
-            if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id);
+            if (await validatePassword(password, user.Password)) return this.GetResponseWithToken(user.Id, user.IsAdmin);
             this.ThrowBadRequest("Senha inválida");
         }
         else this.ThrowBadRequest("Por favor, preencha todos os campos");
@@ -59,7 +59,9 @@ export default class UserServices implements IUserServices {
             this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
             
             user.Password = await bcrypt.hash(user.Password, 1);
-            return this.GetResponseWithToken((await this._repository.Insert(user)).data.Id);
+
+            const newUser = (await this._repository.Insert(user)).data;
+            return this.GetResponseWithToken(newUser.Id, newUser.IsAdmin);
         } catch (error) { throw error }
     }
 

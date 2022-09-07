@@ -1,5 +1,6 @@
 export default interface IUser {
     Email: string
     Username: string,
-    Password: string
+    Password: string,
+    IsAdmin?: boolean
 }

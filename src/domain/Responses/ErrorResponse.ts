@@ -18,4 +18,9 @@ export default class ErrorResponse<T> extends Error {
         const response = Responses.BAD_REQUEST_ERROR;
         return new ErrorResponse(response.StatusCode, response.Message, data);
     }
+
+    static AccessDenied(data?: {}) {
+        const response = Responses.ACCESS_DENIED_ERROR;
+        return new ErrorResponse(response.StatusCode, response.Message, data);
+    }
 }
