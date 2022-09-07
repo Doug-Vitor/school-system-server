@@ -10,27 +10,49 @@ import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Fire
 
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
+import Student from "../../domain/Entities/Person/Student";
+import Responses from "../../domain/Responses/Responses";
+import Subject from "../../domain/Entities/Core/Subject";
 
 export default class GradeServices implements IGradeServices {
     private _repository: BaseRepository<Grade>;
-    private _teacherRepository: BaseRepository<Teacher>;
 
     constructor() {
         this._repository = new BaseRepository(collectionNames.grades);
-        this._teacherRepository = new BaseRepository(collectionNames.teachers);
     }
 
-    private async EnsureTeacherHasSubjectId(authenticatedTeacherId: string, subjectId: string): Promise<boolean> {
-        try {
-            const teacher = (await this._teacherRepository.GetById(authenticatedTeacherId)).data;
-            if (teacher.SubjectsIds.includes(subjectId)) return true;
-            throw ErrorResponse.AccessDenied();
-        } catch (error) { throw error; }
+    private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
+        this.EnsureTeacherHasSubjectId(authenticatedTeacherId, subjectId);
+        this.EnsureStudentExists(studentId);
+        this.EnsureSubjectExists(subjectId);
+    }
+
+    private async EnsureTeacherHasSubjectId(authenticatedTeacherId: string, subjectId: string): Promise<void> {
+        const repository = new BaseRepository<Teacher>(collectionNames.teachers);
+        const teacher = (await repository.GetById(authenticatedTeacherId)).data;
+        if (teacher.SubjectsIds.includes(subjectId)) return;
+        throw ErrorResponse.AccessDenied();
+    }
+
+    private async EnsureStudentExists(studentId: string): Promise<void> {
+        const repository = new BaseRepository<Student>(collectionNames.students);
+        repository.GetById(studentId).catch(error => {
+          const response = Responses.BAD_REQUEST_ERROR;
+          throw new ErrorResponse(response.StatusCode, "Não foi possível encontrar este aluno.");  
+        });
+    }
+
+    private async EnsureSubjectExists(subjectId: string): Promise<void> {
+        const repository = new BaseRepository<Subject>(collectionNames.subjects);
+        repository.GetById(subjectId).catch(error => {
+          const response = Responses.BAD_REQUEST_ERROR;
+          throw new ErrorResponse(response.StatusCode, "Não foi possível encontrar esta matéria. Por favor, entre em contato com um administrador");  
+        });
     }
 
     public async Insert(authenticatedTeacherId: string, grade: Grade): Promise<DefaultResponse<Grade>> {
         try {
-            this.EnsureTeacherHasSubjectId(authenticatedTeacherId, grade.SubjectId);
+            this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
             return this._repository.Insert(grade);
         } catch (error) { throw error }
     }
@@ -73,7 +95,7 @@ export default class GradeServices implements IGradeServices {
 
     public async Update(authenticatedTeacherId: string, id: string, grade: Grade): Promise<DefaultResponse<Grade>> {
         try {
-            await this.EnsureTeacherHasSubjectId(authenticatedTeacherId, id);
+            await this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
             return await this._repository.Update(id, grade);
         } catch (error) { throw error; }
     }
