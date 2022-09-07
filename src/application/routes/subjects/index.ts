@@ -3,10 +3,10 @@ import { getPaginationParams } from '../../helpers';
 
 import Subject from '../../../domain/Entities/Core/Subject';
 import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
-import { firebase } from '../../../domain/Constants';
+import { collectionNames } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Subject>(firebase.collectionNames.subjects);
+const repository = new BaseRepository<Subject>(collectionNames.subjects);
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -25,21 +25,6 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         res.send(await repository.GetById(id as string));
-    } catch (error) { next(error) }
-});
-
-router.patch('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.query;
-        const { theme } = req.body;
-        res.send(await repository.Update(id as string, new Subject(theme)));
-    } catch (error) { next(error) }
-});
-
-router.delete('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.query;
-        res.send(await repository.Delete(id as string));
     } catch (error) { next(error) }
 });
 

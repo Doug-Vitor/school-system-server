@@ -4,19 +4,19 @@ import IPerson from "../../Interfaces/Entities/Person/IPerson";
 import { IsDate, IsPhoneNumber, IsString, Length } from "class-validator";
 import { IsCpf, IsCep } from '../../Validators/index';
 
-import { errors } from '../../Constants'
+import { getInvalidPropertyErrorString,getLengthErrorString } from '../../Constants'
 
 export default abstract class Person extends BaseEntity implements IPerson {
-    @IsString({ message: errors.getInvalidPropertyErrorString("Nome") })
-    @Length(3, 100, { message: errors.getLengthErrorString("Nome") })
+    @IsString({ message: getInvalidPropertyErrorString("Nome") })
+    @Length(3, 100, { message: getLengthErrorString("Nome") })
     Name: string;
 
-    @IsDate({ message: errors.getInvalidPropertyErrorString("Data de nascimento") })
+    @IsDate({ message: getInvalidPropertyErrorString("Data de nascimento") })
     Birthdate: Date;
 
-    @IsCpf({ message: errors.getInvalidPropertyErrorString("CPF") }) public RealId: string;
-    @IsPhoneNumber("BR", { message: errors.getInvalidPropertyErrorString("Número de telefone") }) public PhoneNumber: string
-    @IsCep({ message: errors.getInvalidPropertyErrorString("CEP") }) public ZipCode: string;
+    @IsCpf({ message: getInvalidPropertyErrorString("CPF") }) public RealId: string;
+    @IsPhoneNumber("BR", { message: getInvalidPropertyErrorString("Número de telefone") }) public PhoneNumber: string
+    @IsCep({ message: getInvalidPropertyErrorString("CEP") }) public ZipCode: string;
 
     constructor(name: string, birthdate: Date, phoneNumber: string, realId: string, zipcode: string, createdAt?: Date, id?: string) {
         super(id, createdAt);

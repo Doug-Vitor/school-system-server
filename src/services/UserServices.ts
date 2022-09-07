@@ -15,13 +15,13 @@ import IFirestoreSearchPayload from '../domain/Interfaces/Infrastructure/Firesto
 import IAuthenticationInfos from '../domain/Interfaces/Responses/IAuthenticationInfos';
 
 import { generateToken, validatePassword } from './AuthServices';
-import { firebase } from '../domain/Constants';
+import { collectionNames } from '../domain/Constants';
 
 export default class UserServices implements IUserServices {
     private _repository: BaseRepository<User>;
 
     constructor() {
-        this._repository = new BaseRepository<User>(firebase.collectionNames.users);
+        this._repository = new BaseRepository<User>(collectionNames.users);
     }
 
     private GetResponseWithToken(userId: string): DefaultResponse<IAuthenticationInfos> {

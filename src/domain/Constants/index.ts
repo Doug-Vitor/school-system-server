@@ -1,4 +1,2 @@
-import * as errors from './errors';
-import * as firebase from './firebase';
-
-export { errors, firebase }
+export * from './errors';
+export * from './firebase';
