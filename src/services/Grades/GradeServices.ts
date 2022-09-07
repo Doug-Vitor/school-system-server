@@ -22,24 +22,28 @@ export default class GradeServices implements IGradeServices {
     }
 
     private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
-        this.EnsureTeacherHasSubjectId(authenticatedTeacherId, subjectId);
-        this.EnsureStudentExists(studentId);
+        this.ValidateTeacherPermissions(authenticatedTeacherId, await this.GetStudentClassRoomId(studentId), subjectId);
         this.EnsureSubjectExists(subjectId);
     }
 
-    private async EnsureTeacherHasSubjectId(authenticatedTeacherId: string, subjectId: string): Promise<void> {
+    private async ValidateTeacherPermissions(authenticatedTeacherId: string, classRoomId: string, subjectId: string): Promise<void> {
         const repository = new BaseRepository<Teacher>(collectionNames.teachers);
-        const teacher = (await repository.GetById(authenticatedTeacherId)).data;
-        if (teacher.SubjectsIds.includes(subjectId)) return;
-        throw ErrorResponse.AccessDenied();
+        const searchPayload: IFirestoreSearchPayload = {
+            FieldName: "UserId",
+            OperatorString: "==",
+            SearchValue: authenticatedTeacherId
+        };
+
+        const teacher = (await repository.GetByField(searchPayload, {})).data[0];
+        
+        if (!teacher.SubjectsIds.includes(subjectId)) throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode fazer alterações na nota desse aluno.");
+        if (!teacher.ClassroomsIds.includes(classRoomId)) throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode fazer alterações na nota desse aluno.");
     }
 
-    private async EnsureStudentExists(studentId: string): Promise<void> {
+    private async GetStudentClassRoomId(studentId: string): Promise<string> {
         const repository = new BaseRepository<Student>(collectionNames.students);
-        repository.GetById(studentId).catch(() => {
-          const response = Responses.BAD_REQUEST_ERROR;
-          throw new ErrorResponse(response.StatusCode, "Não foi possível encontrar este aluno.");  
-        });
+        const student = (await repository.GetById(studentId)).data;
+        return student.ClassroomId;
     }
 
     private async EnsureSubjectExists(subjectId: string): Promise<void> {
@@ -102,7 +106,8 @@ export default class GradeServices implements IGradeServices {
 
     public async Delete(authenticatedTeacherId: string, id: string): Promise<DefaultResponse<void>> {
         try {
-            await this.EnsureTeacherHasSubjectId(authenticatedTeacherId, id);
+            const grade = (await this._repository.GetById(id)).data;
+            this.ValidateTeacherPermissions(authenticatedTeacherId, await this.GetStudentClassRoomId(grade.StudentId), grade.SubjectId);
             return await this._repository.Delete(id);
         } catch (error) { throw error; }
     }
