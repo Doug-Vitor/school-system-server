@@ -11,6 +11,6 @@ export default class Classroom extends BaseEntity implements IClassroom {
         
         this.ForAcademicYear = forAcademicYear;
         this.MaxLength = maxLength;
-        this.Room = `${this.ForAcademicYear} ano ${room}`;
+        this.Room = `${this.ForAcademicYear}º ano ${room}`;
     }
 }

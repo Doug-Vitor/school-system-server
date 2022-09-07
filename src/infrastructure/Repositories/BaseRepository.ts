@@ -63,8 +63,8 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
-            await validateOrReject(object);
             const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
+            await validateOrReject(updated);
 
             this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);

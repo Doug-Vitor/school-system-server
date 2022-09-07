@@ -9,7 +9,7 @@ const getPersonFromBody = (body: Record<string, any>): Person => {
         Id: '',
         CreatedAt: new Date(),
         Name: name,
-        Birthdate: birthdate,
+        Birthdate: new Date(birthdate),
         ZipCode: zipCode,
         PhoneNumber: phoneNumber,
         RealId: realId

@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 
 import User from '../../../domain/Entities/Authentication/User';
-import UserServices from '../../../services/UserServices';
+import UserServices from '../../../services/Users/UserServices';
 
 import ErrorResponse from '../../../domain/Responses/ErrorResponse';
 
