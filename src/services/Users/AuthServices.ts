@@ -1,10 +1,10 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
-import ErrorResponse from '../domain/Responses/ErrorResponse';
-import Responses from '../domain/Responses/Responses';
+import ErrorResponse from '../../domain/Responses/ErrorResponse';
+import Responses from '../../domain/Responses/Responses';
 
-import { secretAccessToken } from '../../config.json';
+import { secretAccessToken } from '../../../config.json';
 
 interface ITokenPayload {
     UserId: string,
