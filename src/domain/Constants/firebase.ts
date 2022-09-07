@@ -3,7 +3,8 @@ const collectionNames = {
     subjects: "Subjects",
     classrooms: "Classrooms",
     teachers: "Teachers",
-    students: "Students"
+    students: "Students",
+    grades: "Grades"
 }
 
 export { collectionNames }
