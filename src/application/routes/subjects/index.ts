@@ -28,19 +28,4 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) { next(error) }
 });
 
-router.patch('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.query;
-        const { theme } = req.body;
-        res.send(await repository.Update(id as string, new Subject(theme)));
-    } catch (error) { next(error) }
-});
-
-router.delete('/', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { id } = req.query;
-        res.send(await repository.Delete(id as string));
-    } catch (error) { next(error) }
-});
-
 export default router;
