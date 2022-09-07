@@ -2,13 +2,13 @@ import BaseEntity from "../../domain/Entities/BaseEntity";
 
 import Firestore from "../Firestore";
 import IBaseRepository from "../../domain/Interfaces/Infrastructure/Repositories/IBaseRepository";
+import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 
 import Responses from "../../domain/Responses/Responses";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import { validateOrReject, ValidationError } from "class-validator";
-import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 
 export default class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> {
     private _firestore: Firestore<T>;
@@ -37,7 +37,6 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar nenhum resultado que corresponda ao identificador fornecido.");
         } catch (error) { throw this.GetErrorObject(error) }
     }
-
 
     public async GetByField(searchPayload: IFirestoreSearchPayload, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {

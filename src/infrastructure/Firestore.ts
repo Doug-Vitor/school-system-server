@@ -65,7 +65,6 @@ export default class Firestore<T extends BaseEntity> {
         const itemsPerPage = pagination?.ItemsPerPage || 10;
         const orderByField = this.GetOrderByFieldString(searchPayload.FieldName, searchPayload.OperatorString, pagination?.OrderByField);
         
-        
         const queryConstraints: QueryConstraint[] = [];
         if (searchPayload.FieldName && searchPayload.SearchValue)
         queryConstraints.push(where(searchPayload.FieldName, searchPayload.OperatorString || '==', searchPayload.SearchValue));
