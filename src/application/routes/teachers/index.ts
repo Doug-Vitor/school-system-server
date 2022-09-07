@@ -4,7 +4,6 @@ import { getPaginationParams, getTeacherFromBody } from '../../helpers';
 import Teacher from '../../../domain/Entities/Person/Teacher';
 import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
 import { collectionNames } from '../../../domain/Constants';
-import { validate } from 'class-validator';
 
 const router = express.Router();
 const repository = new BaseRepository<Teacher>(collectionNames.teachers);
