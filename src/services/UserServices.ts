@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 
 import User from "../domain/Entities/Authentication/User";
 import IUserServices from '../domain/Interfaces/Services/IUserServices';
-import { validate, validateOrReject } from 'class-validator';
 
 import DefaultResponse from '../domain/Responses/DefaultResponse';
 import ErrorResponse from '../domain/Responses/ErrorResponse';
@@ -40,9 +39,9 @@ export default class UserServices implements IUserServices {
             FieldName: "Username",
             OperatorString: FirestoreQueryOperatorsEnum.EqualsTo,
             SearchValue: username
-        }
-        const matchedUsers = (await this._repository.GetByField(searchPayload, {})).Data;
-        if (matchedUsers && matchedUsers[0]) return matchedUsers[0];
+        };
+
+        return (await this._repository.GetByField(searchPayload, {})).data[0];
     }
 
     private async GetByUsername(username: string) {
@@ -65,7 +64,7 @@ export default class UserServices implements IUserServices {
             if (await this.GetByUsernameWithoutThrow(user.Username)) this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
 
             user.Password = await bcrypt.hash(user.Password, 1);
-            const newUser = (await this._repository.Insert(user)).Data;
+            const newUser = (await this._repository.Insert(user)).data;
 
             if (newUser) return this.GetResponseWithToken(newUser.Id);
         } catch (error) { throw error }

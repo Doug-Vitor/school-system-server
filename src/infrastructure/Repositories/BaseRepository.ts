@@ -64,7 +64,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
             await validateOrReject(object);
-            const updated = Object.assign({ ...(await this.GetById(id)).Data }, object);
+            const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
 
             this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);
@@ -73,7 +73,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
 
     public async Delete(id: string): Promise<DefaultResponse<void>> {
         try {
-            await this._firestore.DeleteDoc((await this.GetById(id)).Data?.Id as string);
+            await this._firestore.DeleteDoc((await this.GetById(id)).data.Id);
             return new DefaultResponse();
         } catch (error) { throw this.GetErrorObject(error) }
     }
