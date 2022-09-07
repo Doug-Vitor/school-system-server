@@ -1,3 +1,5 @@
+import StudentApproval from '../../../Types/Grades/StudentApproval';
+
 export default interface IGrade {
     SubjectId: string
     StudentId: string
@@ -5,5 +7,5 @@ export default interface IGrade {
     Year: number
     AcademicYear: number
     Grades: Array<number>
-    IsApproved: boolean 
+    IsApproved: StudentApproval
 }
