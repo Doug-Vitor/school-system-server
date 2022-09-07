@@ -17,7 +17,7 @@ export default class Teacher extends Person implements ITeacher {
     public ClassroomsIds: string[];
 
     constructor(userId: string, name: string, birthdate: Date, phoneNumber: string, realId: string, zipCode: string, subjectsIds: string[], classroomsIds: string[], createdAt?: Date) {
-        super(name, birthdate, phoneNumber, realId, zipCode, createdAt, userId);
+        super(name, birthdate, phoneNumber, realId, zipCode, createdAt);
 
         this.UserId = userId;
         this.SubjectsIds = subjectsIds;
