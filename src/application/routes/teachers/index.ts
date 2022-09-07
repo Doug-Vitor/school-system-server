@@ -4,6 +4,7 @@ import { getPaginationParams, getTeacherFromBody } from '../../helpers';
 import Teacher from '../../../domain/Entities/Person/Teacher';
 import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
 import { collectionNames } from '../../../domain/Constants';
+import { validate } from 'class-validator';
 
 const router = express.Router();
 const repository = new BaseRepository<Teacher>(collectionNames.teachers);
@@ -29,7 +30,8 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 
 router.patch('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.Update(req.headers.authenticatedUserId as string, getTeacherFromBody(req.body, req.headers.authenticatedUserId)))
+        const authenticatedUserId = req.headers.authenticatedUserId as string;
+        res.send(await repository.Update(authenticatedUserId, getTeacherFromBody(req.body, authenticatedUserId)))
     } catch (error) { next(error) }
 });
 

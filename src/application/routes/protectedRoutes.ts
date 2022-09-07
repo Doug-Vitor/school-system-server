@@ -19,6 +19,6 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.use('/subjects', subjectsRoutes);
 router.use('/classrooms', classroomsRoutes);
-router.use('/teacher', teachersRoutes);
+router.use('/teachers', teachersRoutes);
 
 export default router;

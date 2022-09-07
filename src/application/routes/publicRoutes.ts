@@ -7,6 +7,6 @@ const router = express.Router();
 
 router.get('/', (_: Request, res: Response) => res.send('My first API with typescript'));
 router.use('/authentication', authenticationRoutes);
-router.use('/teacher', getAll);
+router.use('/teachers', getAll);
 
 export default router;
