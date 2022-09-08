@@ -55,8 +55,8 @@ export default class UserServices implements IUserServices {
     
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         try {
-            if (await this._repository.EnsureExists(this.GetDefaultSearchPayload(user.Username)))
-            this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+            if ((await this._repository.GetByField(this.GetDefaultSearchPayload(user.Username), {})).data[0])
+                this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
             
             user.Password = await bcrypt.hash(user.Password, 1);
 

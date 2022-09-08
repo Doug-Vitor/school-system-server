@@ -22,7 +22,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, getIdNotProvidedErrorString());
     }
 
-    protected async ValidateObject(object: T) {
+    private async ValidateObject(object: T) {
         await validateOrReject(object);
     }
 
@@ -82,13 +82,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async EnsureExists(searchPayload: IFirestoreSearchPayload, errorMessage: string): Promise<boolean> {
-        searchPayload.OperatorString = "==";
-        if ((await this._firestore.GetDocsByField(searchPayload)).Documents.length > 0) return true;
-        throw new ErrorResponse(undefined, errorMessage)
-    }
-
-    protected GetErrorObject(error: ErrorResponse<unknown> | unknown) {
+    private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
