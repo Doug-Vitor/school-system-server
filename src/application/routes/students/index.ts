@@ -6,11 +6,11 @@ import protectedRoutes from './protected';
 import { getPaginationParams } from '../../helpers';
 
 import Student from '../../../domain/Entities/Person/Student';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
+import GenericRepository from '../../../infrastructure/Repositories/GenericRepository';
 import { collectionNames } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Student>(collectionNames.students);
+const repository = new GenericRepository<Student>(collectionNames.students);
 
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

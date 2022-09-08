@@ -4,7 +4,7 @@ import Teacher from "../../domain/Entities/Person/Teacher";
 import Student from "../../domain/Entities/Person/Student";
 
 import IGradeServices from "../../domain/Interfaces/Services/IGradeServices";
-import BaseRepository from "../../infrastructure/Repositories/BaseRepository";
+import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
 import { collectionNames } from "../../domain/Constants";
 
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
@@ -15,10 +15,10 @@ import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 
 export default class GradeServices implements IGradeServices {
-    private _repository: BaseRepository<Grade>;
+    private _repository: GenericRepository<Grade>;
 
     constructor() {
-        this._repository = new BaseRepository(collectionNames.grades);
+        this._repository = new GenericRepository(collectionNames.grades);
     }
 
     private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
@@ -27,7 +27,7 @@ export default class GradeServices implements IGradeServices {
     }
 
     private async ValidateTeacherPermissions(authenticatedTeacherId: string, classRoomId: string, subjectId: string): Promise<void> {
-        const repository = new BaseRepository<Teacher>(collectionNames.teachers);
+        const repository = new GenericRepository<Teacher>(collectionNames.teachers);
         const searchPayload: IFirestoreSearchPayload = {
             FieldName: "UserId",
             OperatorString: "==",
@@ -41,13 +41,13 @@ export default class GradeServices implements IGradeServices {
     }
 
     private async GetStudentClassRoomId(studentId: string): Promise<string> {
-        const repository = new BaseRepository<Student>(collectionNames.students);
+        const repository = new GenericRepository<Student>(collectionNames.students);
         const student = (await repository.GetById(studentId)).data;
         return student.ClassroomId;
     }
 
     private async EnsureSubjectExists(subjectId: string): Promise<void> {
-        const repository = new BaseRepository<Subject>(collectionNames.subjects);
+        const repository = new GenericRepository<Subject>(collectionNames.subjects);
         repository.GetById(subjectId).catch(() => {
           const response = Responses.BAD_REQUEST_ERROR;
           throw new ErrorResponse(response.StatusCode, "Não foi possível encontrar esta matéria. Por favor, entre em contato com um administrador");  

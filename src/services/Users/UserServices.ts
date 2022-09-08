@@ -8,7 +8,7 @@ import DefaultResponse from '../../domain/Responses/DefaultResponse';
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import Responses from "../../domain/Responses/Responses";
 
-import BaseRepository from "../../infrastructure/Repositories/BaseRepository";
+import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
 import FirestoreQueryOperatorsEnum from '../../domain/Enums/FirestoreQueryOperatorsEnum';
 import IFirestoreSearchPayload from '../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 import IAuthenticationInfos from '../../domain/Interfaces/Responses/IAuthenticationInfos';
@@ -17,10 +17,10 @@ import { generateToken, validatePassword } from './AuthServices';
 import { collectionNames } from '../../domain/Constants';
 
 export default class UserServices implements IUserServices {
-    private _repository: BaseRepository<User>;
+    private _repository: GenericRepository<User>;
 
     constructor() {
-        this._repository = new BaseRepository<User>(collectionNames.users);
+        this._repository = new GenericRepository<User>(collectionNames.users);
     }
 
     private GetDefaultSearchPayload(username: string): IFirestoreSearchPayload {
