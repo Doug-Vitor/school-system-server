@@ -5,7 +5,7 @@ import GenericRepository from "../../infrastructure/Repositories/GenericReposito
 import { collectionNames } from "../../domain/Constants";
 
 import IGradeServices from "../../domain/Interfaces/Services/IGradeServices";
-import TeacherServices from "../Teachers/TeacherServices";
+import TeacherRepository from "../../infrastructure/Repositories/TeacherRepository";
 
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
@@ -14,16 +14,16 @@ import DefaultResponse from "../../domain/Responses/DefaultResponse";
 
 export default class GradeServices implements IGradeServices {
     private _repository: GenericRepository<Grade>;
-    private _teacherServices: TeacherServices;
+    private _teacherRepository: TeacherRepository;
 
     constructor() {
         this._repository = new GenericRepository(collectionNames.grades);
-        this._teacherServices = new TeacherServices();
+        this._teacherRepository = new TeacherRepository();
     }
 
     private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
-        this._teacherServices.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, studentId);
         await new GenericRepository<Subject>(collectionNames.subjects).GetById(subjectId);
+        this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, studentId);
     }
 
     public async Insert(authenticatedTeacherId: string, grade: Grade): Promise<DefaultResponse<Grade>> {
@@ -79,7 +79,7 @@ export default class GradeServices implements IGradeServices {
     public async Delete(authenticatedTeacherId: string, id: string): Promise<DefaultResponse<void>> {
         try {
             const grade = (await this._repository.GetById(id)).data;
-            this._teacherServices.ValidateTeacherPermissions(authenticatedTeacherId, grade.SubjectId, grade.StudentId);
+            this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, grade.SubjectId, grade.StudentId);
             return await this._repository.Delete(grade.Id);
         } catch (error) { throw error; }
     }

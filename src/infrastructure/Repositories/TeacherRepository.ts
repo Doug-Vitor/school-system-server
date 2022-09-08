@@ -3,14 +3,14 @@ import Student from "../../domain/Entities/Person/Student";
 import Subject from "../../domain/Entities/Core/Subject";
 import Classroom from "../../domain/Entities/Core/Classroom";
 
-import ITeacherServices from "../../domain/Interfaces/Services/ITeacherServices";
-import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
+import ITeacherRepository from "../../domain/Interfaces/Infrastructure/Repositories/ITeacherRepository";
+import GenericRepository from "./GenericRepository";
 import { collectionNames } from "../../domain/Constants";
 
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 
-export default class TeacherServices extends GenericRepository<Teacher> implements ITeacherServices {
+export default class TeacherServices extends GenericRepository<Teacher> implements ITeacherRepository {
     private _classRoomRepository: GenericRepository<Classroom>;
     private _subjectRepository: GenericRepository<Subject>
 
