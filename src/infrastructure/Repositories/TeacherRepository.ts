@@ -22,27 +22,35 @@ export default class TeacherServices extends GenericRepository<Teacher> implemen
     }
 
     public override Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
-        this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
-        return super.Insert(object);
+        try {
+            this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
+            return super.Insert(object);
+        } catch (error) { throw super.GetErrorObject(error); }
     }
 
-    public Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
-        this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
-        return super.Update(id, object);
+    public override Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
+        try {
+            this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
+            return super.Update(id, object);
+        } catch (error) { throw super.GetErrorObject(error); }
     }
 
     public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, studentId: string): Promise<void> {
-        const authenticatedTeacher = (await this.GetById(authenticatedTeacherId)).data;
-        const student = (await new GenericRepository<Student>(collectionNames.students).GetById(studentId)).data;
+        try {
+            const authenticatedTeacher = (await this.GetById(authenticatedTeacherId)).data;
+            const student = (await new GenericRepository<Student>(collectionNames.students).GetById(studentId)).data;
 
-        if (!authenticatedTeacher.ClassroomsIds.includes(student.ClassroomId))
-            throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
-        if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
-            throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
+            if (!authenticatedTeacher.ClassroomsIds.includes(student.ClassroomId))
+                throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
+            if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
+                throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
+        } catch (error) { throw super.GetErrorObject(error); }
     }
 
     private ValidateTeacherArrays(classroomsIds: string[], subjectsIds: string[]) {
-        classroomsIds.forEach(id => this._classRoomRepository.GetById(id));
-        subjectsIds.forEach(id => this._subjectRepository.GetById(id));
+        try {
+            classroomsIds.forEach(id => this._classRoomRepository.GetById(id));
+            subjectsIds.forEach(id => this._subjectRepository.GetById(id));
+        } catch (error) { throw super.GetErrorObject(error); }
     }
 }

@@ -67,6 +67,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
+            console.log(id);
             const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
             await this.ValidateObject(updated);
 
@@ -82,7 +83,8 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
+    protected GetErrorObject(error: ErrorResponse<unknown> | unknown) {
+        console.log(error);
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
