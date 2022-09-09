@@ -21,14 +21,10 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     private ValidateId(id: string) {
         if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, getIdNotProvidedErrorString());
     }
-
-    private async ValidateObject(object: T) {
-        await validateOrReject(object);
-    }
-
+    
     public async Insert(object: T): Promise<DefaultResponse<T>> {
         try {
-            this.ValidateObject(object);
+            await validateOrReject(object);
             return this.GetById((await this._firestore.AddDoc(object)).id);
         } catch (error) { throw this.GetErrorObject(error) }
     }
@@ -67,9 +63,8 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
-            console.log(id);
             const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
-            await this.ValidateObject(updated);
+            await validateOrReject(updated);
 
             this._firestore.UpdateDoc(id, updated);
             return new DefaultResponse(updated);
@@ -84,7 +79,6 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     }
 
     protected GetErrorObject(error: ErrorResponse<unknown> | unknown) {
-        console.log(error);
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;

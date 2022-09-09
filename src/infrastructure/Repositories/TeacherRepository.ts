@@ -21,18 +21,19 @@ export default class TeacherServices extends GenericRepository<Teacher> implemen
         this._subjectRepository = new GenericRepository(collectionNames.subjects);
     }
 
-    public override Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
+    public override async Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
+            await this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
             return super.Insert(object);
-        } catch (error) { throw super.GetErrorObject(error); }
+        } catch (error) { throw error; }
     }
 
-    public override Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
+    public override async Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
-            return super.Update(id, object);
-        } catch (error) { throw super.GetErrorObject(error); }
+            const teacher = (await super.GetByField({ FieldName: "UserId", OperatorString: "==", SearchValue: id }, {})).data[0]
+            await this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
+            return super.Update(teacher.Id, object);
+        } catch (error) { throw error; }
     }
 
     public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, studentId: string): Promise<void> {
@@ -44,13 +45,23 @@ export default class TeacherServices extends GenericRepository<Teacher> implemen
                 throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
             if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
                 throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
-        } catch (error) { throw super.GetErrorObject(error); }
+        } catch (error) { throw error; }
     }
 
-    private ValidateTeacherArrays(classroomsIds: string[], subjectsIds: string[]) {
-        try {
-            classroomsIds.forEach(id => this._classRoomRepository.GetById(id));
-            subjectsIds.forEach(id => this._subjectRepository.GetById(id));
-        } catch (error) { throw super.GetErrorObject(error); }
+    private async ValidateTeacherArrays(classroomsIds: string[], subjectsIds: string[]) {
+        await this.ValidateClassRoomsIds(classroomsIds);
+        await this.ValidateSubjectsIds(subjectsIds);
+    }
+
+    private async ValidateClassRoomsIds(classroomsIds: string[]) {
+        await Promise.all(classroomsIds.map(async (id) => {
+            await this._classRoomRepository.GetById(id);
+        }));
+    }
+
+    private async ValidateSubjectsIds(subjectsIds: string[]) {
+        await Promise.all(subjectsIds.map(async (id) => {
+            await this._subjectRepository.GetById(id);
+        }));
     }
 }

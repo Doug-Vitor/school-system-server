@@ -14,12 +14,16 @@ export default class StudentRepository extends GenericRepository<Student> {
     }
 
     public override async Insert(student: Student): Promise<DefaultResponse<Student>> {
-        await this._classRoomRepository.GetById(student.ClassroomId);
-        return super.Insert(student);
+        try {
+            await this._classRoomRepository.GetById(student.ClassroomId);
+            return super.Insert(student);
+        } catch (error) { throw super.GetErrorObject(error) }
     }
 
     public override async Update(id: string, student: Student): Promise<DefaultResponse<Student>> {
-        await this._classRoomRepository.GetById(student.ClassroomId);
-        return super.Update(id, student);
+        try {
+            await this._classRoomRepository.GetById(student.ClassroomId);
+            return super.Update(id, student);
+        } catch (error) { throw super.GetErrorObject(error) }
     }
 }
