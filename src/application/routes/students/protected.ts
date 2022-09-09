@@ -1,13 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 
+import StudentRepository from '../../../infrastructure/Repositories/StudentRepository';
 import { getStudentFromBody } from '../../helpers';
 
-import Student from '../../../domain/Entities/Person/Student';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
-import { collectionNames } from '../../../domain/Constants';
-
 const router = express.Router();
-const repository = new BaseRepository<Student>(collectionNames.students);
+const repository = new StudentRepository();
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

@@ -2,6 +2,7 @@ import Person from "../../../domain/Entities/Person/Person";
 import Teacher from "../../../domain/Entities/Person/Teacher";
 import Student from "../../../domain/Entities/Person/Student";
 import Grade from "../../../domain/Entities/Core/Grade";
+import ErrorResponse from "../../../domain/Responses/ErrorResponse";
 
 const getPersonFromBody = (body: Record<string, any>): Person => {
     const { name, birthdate, zipCode, phoneNumber, realId } = body;
@@ -32,6 +33,9 @@ const getStudentFromBody = (body: Record<string, any>): Student => {
 
 const getGradeFromBody = (body: Record<string, any>): Grade => {
     const { subjectId, studentId, academicYear, year, grades, isApproved } = body;
+
+    if (!subjectId || !studentId) throw ErrorResponse.BadRequest("Por favor, preencha todos os campos");
+
     return new Grade(subjectId, studentId, academicYear, year, grades, isApproved);
 }
 

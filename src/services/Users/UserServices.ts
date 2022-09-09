@@ -8,7 +8,7 @@ import DefaultResponse from '../../domain/Responses/DefaultResponse';
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import Responses from "../../domain/Responses/Responses";
 
-import BaseRepository from "../../infrastructure/Repositories/BaseRepository";
+import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
 import FirestoreQueryOperatorsEnum from '../../domain/Enums/FirestoreQueryOperatorsEnum';
 import IFirestoreSearchPayload from '../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 import IAuthenticationInfos from '../../domain/Interfaces/Responses/IAuthenticationInfos';
@@ -17,10 +17,10 @@ import { generateToken, validatePassword } from './AuthServices';
 import { collectionNames } from '../../domain/Constants';
 
 export default class UserServices implements IUserServices {
-    private _repository: BaseRepository<User>;
+    private _repository: GenericRepository<User>;
 
     constructor() {
-        this._repository = new BaseRepository<User>(collectionNames.users);
+        this._repository = new GenericRepository<User>(collectionNames.users);
     }
 
     private GetDefaultSearchPayload(username: string): IFirestoreSearchPayload {
@@ -55,8 +55,8 @@ export default class UserServices implements IUserServices {
     
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         try {
-            if (await this._repository.EnsureExists(this.GetDefaultSearchPayload(user.Username)))
-            this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
+            if ((await this._repository.GetByField(this.GetDefaultSearchPayload(user.Username), {})).data[0])
+                this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
             
             user.Password = await bcrypt.hash(user.Password, 1);
 

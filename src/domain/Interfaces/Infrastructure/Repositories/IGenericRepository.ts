@@ -9,5 +9,4 @@ export default interface IBaseRepository<T> {
     GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
     Update(id: string, object: T): Promise<DefaultResponse<T>>
     Delete(id: string): Promise<DefaultResponse<void>>
-    EnsureExists(searchPayload: IFirestoreSearchPayload): Promise<boolean>
 }

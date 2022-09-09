@@ -7,7 +7,7 @@ export default class Student extends Person implements IStudent {
     public MedicalObservations?: string | undefined;
     public IsActive: boolean;
 
-    constructor(name: string, birthdate: Date, phoneNumber: string, realId: string, zipCode: string, classroomId: string, academicYear: number, isActive: boolean, medicalObservations?: string, createdAt?: Date, id?: string) {
+    constructor(name: string, birthdate: Date, phoneNumber: string, realId: string, zipCode: string, classroomId: string, academicYear: number, isActive: boolean, medicalObservations: string = '', createdAt?: Date, id?: string) {
         super(name, birthdate, phoneNumber, realId, zipCode, createdAt, id);
         
         this.ClassroomId = classroomId;

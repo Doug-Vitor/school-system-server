@@ -1,12 +1,12 @@
 import express, { Request, Response, NextFunction } from 'express';
 
 import Classroom from '../../../domain/Entities/Core/Classroom';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
+import GenericRepository from '../../../infrastructure/Repositories/GenericRepository';
 
 import { collectionNames } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Classroom>(collectionNames.classrooms);
+const repository = new GenericRepository<Classroom>(collectionNames.classrooms);
 
 router.get('/', async (_: Request, res: Response, next: NextFunction) => {
     try {

@@ -1,12 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { getPaginationParams, getTeacherFromBody } from '../../helpers';
 
-import Teacher from '../../../domain/Entities/Person/Teacher';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
-import { collectionNames } from '../../../domain/Constants';
+import TeacherRepository from '../../../infrastructure/Repositories/TeacherRepository';
 
 const router = express.Router();
-const repository = new BaseRepository<Teacher>(collectionNames.teachers);
+const repository = new TeacherRepository();
 
 export async function getAll(req: Request, res: Response, next: NextFunction) {
     try {

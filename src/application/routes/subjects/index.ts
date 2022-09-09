@@ -2,11 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import { getPaginationParams } from '../../helpers';
 
 import Subject from '../../../domain/Entities/Core/Subject';
-import BaseRepository from '../../../infrastructure/Repositories/BaseRepository';
+import GenericRepository from '../../../infrastructure/Repositories/GenericRepository';
 import { collectionNames } from '../../../domain/Constants';
 
 const router = express.Router();
-const repository = new BaseRepository<Subject>(collectionNames.subjects);
+const repository = new GenericRepository<Subject>(collectionNames.subjects);
 
 router.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {

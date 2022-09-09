@@ -1,7 +1,7 @@
 import BaseEntity from "../../domain/Entities/BaseEntity";
 
 import Firestore from "../Firestore";
-import IBaseRepository from "../../domain/Interfaces/Infrastructure/Repositories/IBaseRepository";
+import IGenericRepository from "../../domain/Interfaces/Infrastructure/Repositories/IGenericRepository";
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Pagination/IPaginationPayload";
 import { getIdNotProvidedErrorString, getNotFoundErrorString } from "../../domain/Constants";
@@ -11,8 +11,8 @@ import DefaultResponse from "../../domain/Responses/DefaultResponse";
 import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import { validateOrReject, ValidationError } from "class-validator";
 
-export default class BaseRepository<T extends BaseEntity> implements IBaseRepository<T> {
-    private _firestore: Firestore<T>;
+export default class GenericRepository<T extends BaseEntity> implements IGenericRepository<T> {
+    protected _firestore: Firestore<T>;
 
     constructor(collectionName: string) {
         this._firestore = new Firestore<T>(collectionName);
@@ -21,7 +21,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
     private ValidateId(id: string) {
         if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, getIdNotProvidedErrorString());
     }
-
+    
     public async Insert(object: T): Promise<DefaultResponse<T>> {
         try {
             await validateOrReject(object);
@@ -33,7 +33,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         try {
             this.ValidateId(id);
             const object = (await this._firestore.GetDocById(id)).data();
-
+            
             if (object) return new DefaultResponse(object);
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
         } catch (error) { throw this.GetErrorObject(error) }
@@ -78,12 +78,7 @@ export default class BaseRepository<T extends BaseEntity> implements IBaseReposi
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async EnsureExists(searchPayload: IFirestoreSearchPayload): Promise<boolean> {
-        searchPayload.OperatorString = "==";
-        return (await this._firestore.GetDocsByField(searchPayload)).Documents.length > 0;
-    }
-
-    private GetErrorObject(error: ErrorResponse<unknown> | unknown) {
+    protected GetErrorObject(error: ErrorResponse<unknown> | unknown) {
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;

@@ -1,4 +1,5 @@
 import Responses from './Responses';
+import { getNotFoundErrorString } from '../Constants';
 
 export default class ErrorResponse<T> extends Error {
     public readonly statusCode: number;
@@ -14,9 +15,14 @@ export default class ErrorResponse<T> extends Error {
         this.data = data;
     }
 
-    static BadRequest(data?: {}) {
+    static BadRequest(errorMessage?: string, data?: {}) {
         const response = Responses.BAD_REQUEST_ERROR;
-        return new ErrorResponse(response.StatusCode, response.Message, data);
+        return new ErrorResponse(response.StatusCode, errorMessage ?? response.Message, data);
+    }
+
+    static NotFound(entityNotFound?: string) {
+        const response = Responses.NOT_FOUND_ERROR;
+        return new ErrorResponse(response.StatusCode, getNotFoundErrorString(entityNotFound));
     }
 
     static Unauthorized(errorMessage?: string, data?: {}) {
