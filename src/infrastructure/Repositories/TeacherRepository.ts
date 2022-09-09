@@ -10,7 +10,7 @@ import { collectionNames } from "../../domain/Constants";
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 
-export default class TeacherServices extends GenericRepository<Teacher> implements ITeacherRepository {
+export default class TeacherRepositoy extends GenericRepository<Teacher> implements ITeacherRepository {
     private _classRoomRepository: GenericRepository<Classroom>;
     private _subjectRepository: GenericRepository<Subject>
 
@@ -54,14 +54,21 @@ export default class TeacherServices extends GenericRepository<Teacher> implemen
     }
 
     private async ValidateClassRoomsIds(classroomsIds: string[]) {
-        await Promise.all(classroomsIds.map(async (id) => {
-            await this._classRoomRepository.GetById(id);
-        }));
+        try {
+            for await (const id of classroomsIds) await this._classRoomRepository.GetById(id);
+        } catch (error) { this.GetNotFoundError(error, "Sala de aula") }
     }
 
     private async ValidateSubjectsIds(subjectsIds: string[]) {
-        await Promise.all(subjectsIds.map(async (id) => {
-            await this._subjectRepository.GetById(id);
-        }));
+        try {
+            for await (const id of subjectsIds) await this._subjectRepository.GetById(id);
+        } catch (error) { this.GetNotFoundError(error, "Matéria") }
+    }
+    
+    private GetNotFoundError(error: unknown, entity: string): ErrorResponse<unknown> {
+        if (error instanceof ErrorResponse && error.statusCode === 404)
+            return super.GetErrorObject(ErrorResponse.NotFound(entity))
+        return super.GetErrorObject(error);
+    
     }
 }

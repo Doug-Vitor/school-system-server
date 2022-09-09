@@ -24,13 +24,14 @@ export default class GradeServices implements IGradeServices {
     private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
         try {
             await new GenericRepository<Subject>(collectionNames.subjects).GetById(subjectId);
-            this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, studentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, studentId);
         } catch (error) { throw error; }
     }
 
     public async Insert(authenticatedTeacherId: string, grade: Grade): Promise<DefaultResponse<Grade>> {
         try {
-            this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
+            console.log(grade);
+            await this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
             return this._repository.Insert(grade);
         } catch (error) { throw error }
     }
