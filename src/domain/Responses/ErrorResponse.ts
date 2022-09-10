@@ -15,9 +15,9 @@ export default class ErrorResponse<T> extends Error {
         this.data = data;
     }
 
-    static BadRequest(data?: {}) {
+    static BadRequest(errorMessage?: string, data?: {}) {
         const response = Responses.BAD_REQUEST_ERROR;
-        return new ErrorResponse(response.StatusCode, response.Message, data);
+        return new ErrorResponse(response.StatusCode, errorMessage ?? response.Message, data);
     }
 
     static NotFound(entityNotFound?: string) {

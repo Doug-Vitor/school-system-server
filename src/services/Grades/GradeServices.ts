@@ -11,6 +11,7 @@ import IPaginationPayload from "../../domain/Interfaces/Infrastructure/Paginatio
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
+import Student from "../../domain/Entities/Person/Student";
 
 export default class GradeServices implements IGradeServices {
     private _repository: GenericRepository<Grade>;
@@ -24,15 +25,15 @@ export default class GradeServices implements IGradeServices {
     private async EnsureEntitiesExists(subjectId: string, studentId: string, authenticatedTeacherId: string) {
         try {
             await new GenericRepository<Subject>(collectionNames.subjects).GetById(subjectId);
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, studentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, subjectId, await this.GetStudentClassRoomId(studentId));
         } catch (error) { throw error; }
     }
 
     public async Insert(authenticatedTeacherId: string, grade: Grade): Promise<DefaultResponse<Grade>> {
         try {
-            console.log(grade);
+            grade = await this.SetGradeProperties(grade);
             await this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
-            return this._repository.Insert(grade);
+            return await this._repository.Insert(grade);
         } catch (error) { throw error }
     }
 
@@ -74,6 +75,7 @@ export default class GradeServices implements IGradeServices {
 
     public async Update(authenticatedTeacherId: string, id: string, grade: Grade): Promise<DefaultResponse<Grade>> {
         try {
+            grade = await this.SetGradeProperties(grade);
             await this.EnsureEntitiesExists(grade.SubjectId, grade.StudentId, authenticatedTeacherId);
             return await this._repository.Update(id, grade);
         } catch (error) { throw error; }
@@ -82,8 +84,18 @@ export default class GradeServices implements IGradeServices {
     public async Delete(authenticatedTeacherId: string, id: string): Promise<DefaultResponse<void>> {
         try {
             const grade = (await this._repository.GetById(id)).data;
-            this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, grade.SubjectId, grade.StudentId);
+            this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, grade.SubjectId, await this.GetStudentClassRoomId(grade.StudentId));
             return await this._repository.Delete(grade.Id);
         } catch (error) { throw error; }
+    }
+
+    private async GetStudentClassRoomId(studentId: string) {
+        return (await new GenericRepository<Student>(collectionNames.students).GetById(studentId)).data.ClassroomId;
+    }
+
+    private async SetGradeProperties(grade: Grade) {
+        grade.AcademicYear = (await new GenericRepository<Student>(collectionNames.students).GetById(grade.StudentId)).data.AcademicYear;
+        grade.Year = new Date().getFullYear();
+        return grade;
     }
 }

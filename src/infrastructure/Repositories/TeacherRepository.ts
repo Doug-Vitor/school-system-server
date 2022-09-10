@@ -1,5 +1,4 @@
 import Teacher from "../../domain/Entities/Person/Teacher";
-import Student from "../../domain/Entities/Person/Student";
 import Subject from "../../domain/Entities/Core/Subject";
 import Classroom from "../../domain/Entities/Core/Classroom";
 
@@ -7,6 +6,7 @@ import ITeacherRepository from "../../domain/Interfaces/Infrastructure/Repositor
 import GenericRepository from "./GenericRepository";
 import { collectionNames } from "../../domain/Constants";
 
+import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 
@@ -36,12 +36,16 @@ export default class TeacherRepositoy extends GenericRepository<Teacher> impleme
         } catch (error) { throw error; }
     }
 
-    public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, studentId: string): Promise<void> {
+    public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, classroomId: string): Promise<void> {
         try {
-            const authenticatedTeacher = (await this.GetById(authenticatedTeacherId)).data;
-            const student = (await new GenericRepository<Student>(collectionNames.students).GetById(studentId)).data;
+            const searchPayload: IFirestoreSearchPayload = {
+                FieldName: "UserId",
+                OperatorString: "==",
+                SearchValue: authenticatedTeacherId
+            }
+            const authenticatedTeacher = (await this.GetByField(searchPayload, {})).data[0];
 
-            if (!authenticatedTeacher.ClassroomsIds.includes(student.ClassroomId))
+            if (!authenticatedTeacher.ClassroomsIds.includes(classroomId))
                 throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
             if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
                 throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
@@ -64,11 +68,11 @@ export default class TeacherRepositoy extends GenericRepository<Teacher> impleme
             for await (const id of subjectsIds) await this._subjectRepository.GetById(id);
         } catch (error) { this.GetNotFoundError(error, "Matéria") }
     }
-    
+
     private GetNotFoundError(error: unknown, entity: string): ErrorResponse<unknown> {
         if (error instanceof ErrorResponse && error.statusCode === 404)
             return super.GetErrorObject(ErrorResponse.NotFound(entity))
         return super.GetErrorObject(error);
-    
+
     }
 }

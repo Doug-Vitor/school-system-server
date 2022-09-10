@@ -33,7 +33,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         try {
             this.ValidateId(id);
             const object = (await this._firestore.GetDocById(id)).data();
-
+            
             if (object) return new DefaultResponse(object);
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
         } catch (error) { throw this.GetErrorObject(error) }
