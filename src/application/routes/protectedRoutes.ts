@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 
 import { routes } from '../../domain/Constants';
 import subjectsRoutes from './subjects';
-import classroomsRoutes from './classrooms';
+import * as classroomController from '../controllers/classRoomsController';
 import teachersRoutes from './teachers';
 import studentsRoutes from './students';
 import gradesRoutes from './grades';
@@ -20,9 +20,11 @@ router.get('/', async (req: Request, res: Response) => {
 });
 
 router.use(routes.subjects, subjectsRoutes);
-router.use(routes.classrooms, classroomsRoutes);
 router.use(routes.teachers, teachersRoutes);
 router.use(routes.students, studentsRoutes);
 router.use(routes.grades, gradesRoutes);
+
+router.use('/', classroomController.getWithPagination);
+router.use('/:id', classroomController.getById);
 
 export default router;
