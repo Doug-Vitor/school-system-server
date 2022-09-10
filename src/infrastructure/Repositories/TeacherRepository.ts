@@ -10,7 +10,7 @@ import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Fire
 import ErrorResponse from "../../domain/Responses/ErrorResponse";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
 
-export default class TeacherRepositoy extends GenericRepository<Teacher> implements ITeacherRepository {
+export default class TeacherRepository extends GenericRepository<Teacher> implements ITeacherRepository {
     private _classRoomRepository: GenericRepository<Classroom>;
     private _subjectRepository: GenericRepository<Subject>
 

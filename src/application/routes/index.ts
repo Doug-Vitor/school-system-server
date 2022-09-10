@@ -1,5 +1,5 @@
 import express from 'express';
-import authenticationMiddleware from '../middlewares/authentication';
+import authenticationMiddleware, { ensureIsAdmin } from '../middlewares/authentication';
 
 import publicRoutes from './publicRoutes';
 import protectedRoutes from './protectedRoutes';
