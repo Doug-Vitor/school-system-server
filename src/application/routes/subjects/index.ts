@@ -3,8 +3,8 @@ import { insert, getWithPagination, getById } from '../../controllers/subjectsCo
 
 const router = express.Router();
 
-router.use('/', insert);
-router.use('/', getWithPagination);
-router.use('/:id', getById);
+router.post('/', insert);
+router.get('/', getWithPagination);
+router.get('/:id', getById);
 
 export default router;
