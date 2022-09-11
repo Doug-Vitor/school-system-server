@@ -20,9 +20,9 @@ export default class Firestore<T extends BaseEntity> {
     private _collectionName: string;
     private _collection: CollectionReference;
 
-    constructor(collectionName: string) {
+    constructor(collectionName: string, entityConverter = converter<T>()) {
         this._database = this.InitializeFirestore();
-        this._converter = converter<T>();
+        this._converter = entityConverter;
 
         this._collectionName = collectionName;
         this._collection = collection(this._database, collectionName).withConverter(this._converter);
