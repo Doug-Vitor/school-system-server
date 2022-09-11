@@ -26,7 +26,7 @@ export default class UserServices implements IUserServices {
     private GetDefaultSearchPayload(username: string): IFirestoreSearchPayload {
         return {
             FieldName: "Username",
-            OperatorString: FirestoreQueryOperatorsEnum.EqualsTo,
+            OperatorString: "==",
             SearchValue: username
         }
     }
@@ -37,13 +37,13 @@ export default class UserServices implements IUserServices {
             GeneratedToken: generateToken({ UserId: userId, IsAdmin: isAdmin })
         })
     }
-    
+
     private async GetByUsername(username: string) {
-        const user = (await this._repository.GetByField(this.GetDefaultSearchPayload(username), {})).data[0];
+        const user = (await this._repository.Search(this.GetDefaultSearchPayload(username), {})).data[0];
         if (user) return user;
         throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um usuário com o nome de usuário fornecido");
     }
-    
+
     public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
         if (username && password) {
             const user = await this.GetByUsername(username);
@@ -52,12 +52,12 @@ export default class UserServices implements IUserServices {
         }
         else this.ThrowBadRequest("Por favor, preencha todos os campos");
     }
-    
+
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         try {
-            if ((await this._repository.GetByField(this.GetDefaultSearchPayload(user.Username), {})).data[0])
+            if ((await this._repository.GetFirst(this.GetDefaultSearchPayload(user.Username))).data)
                 this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
-            
+
             user.Password = await bcrypt.hash(user.Password, 1);
 
             const newUser = (await this._repository.Insert(user)).data;
