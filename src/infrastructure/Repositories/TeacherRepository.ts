@@ -30,7 +30,7 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
 
     public override async Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            const teacher = (await super.GetByField({ FieldName: "UserId", OperatorString: "==", SearchValue: id }, {})).data[0]
+            const teacher = (await super.GetFirst({ FieldName: "UserId", OperatorString: "==", SearchValue: id })).data;
             await this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
             return super.Update(teacher.Id, object);
         } catch (error) { throw error; }
@@ -43,7 +43,7 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
                 OperatorString: "==",
                 SearchValue: authenticatedTeacherId
             }
-            const authenticatedTeacher = (await this.GetByField(searchPayload, {})).data[0];
+            const authenticatedTeacher = (await this.GetFirst(searchPayload)).data;
 
             if (!authenticatedTeacher.ClassroomsIds.includes(classroomId))
                 throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");

@@ -17,7 +17,7 @@ const insert = async (req: Request, res: Response, next: NextFunction) => {
 
 const getWithPagination = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.GetWithPagination(getPaginationParams(req.query)));
+        res.send(await repository.GetAll(getPaginationParams(req.query)));
     } catch (error) { next(error) }
 };
 

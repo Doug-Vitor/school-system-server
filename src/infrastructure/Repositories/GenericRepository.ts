@@ -41,9 +41,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<T>> {
         try {
-            const object = (await this._firestore.SearchDoc(searchPayload)).data();
-            if (object) return new DefaultResponse(object);
-            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
+            return new DefaultResponse((await this._firestore.SearchDoc(searchPayload)).data());
         } catch (error) { throw this.GetErrorObject(error) }
     }
 

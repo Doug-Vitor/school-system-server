@@ -9,7 +9,7 @@ const repository = new GenericRepository<Classroom>(collectionNames.classrooms);
 const getWithPagination = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { itemsPerPage } = req.query;
-        res.send(await repository.GetWithPagination({ ItemsPerPage: itemsPerPage as unknown as number ?? 100 }));
+        res.send(await repository.GetAll({ ItemsPerPage: itemsPerPage as unknown as number ?? 100 }));
     } catch (error) { next(error) }
 };
 

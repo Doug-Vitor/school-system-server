@@ -20,7 +20,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
 
 const getWithPagination = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.GetWithPagination(getPaginationParams(req.params)));
+        res.send(await repository.GetAll(getPaginationParams(req.params)));
     } catch (error) { next(error) }
 };
 

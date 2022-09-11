@@ -45,7 +45,7 @@ export default class GradeServices implements IGradeServices {
                 SearchValue: subjectId
             }
 
-            return await this._repository.GetByField(searchPayload, paginationPayload)
+            return await this._repository.Search(searchPayload, paginationPayload)
         } catch (error) { throw error; }
     }
 
@@ -57,7 +57,7 @@ export default class GradeServices implements IGradeServices {
                 SearchValue: studentId
             }
 
-            return await this._repository.GetByField(searchPayload, paginationPayload)
+            return await this._repository.Search(searchPayload, paginationPayload)
         } catch (error) { throw error; }
     }
 
@@ -69,7 +69,7 @@ export default class GradeServices implements IGradeServices {
                 SearchValue: academicYear
             }
 
-            return await this._repository.GetByField(searchPayload, paginationPayload)
+            return await this._repository.Search(searchPayload, paginationPayload)
         } catch (error) { throw error; }
     }
 

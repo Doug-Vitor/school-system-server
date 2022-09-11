@@ -1,5 +1,5 @@
 import express from 'express';
-import { getWithPagination, getById } from '../../controllers/classroomsController';
+import { getById, getWithPagination } from '../../controllers/classRoomsController';
 
 const router = express.Router();
 router.get('/', getWithPagination);

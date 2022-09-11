@@ -16,7 +16,7 @@ router.get('/', async (req: Request, res: Response) => {
     const { collectionName } = req.query;
 
     const [searchPayload, paginationPayload] = [getSearchParams(req.query), getPaginationParams(req.query)];
-    res.send(await new GenericRepository(collectionName as string).GetByField(searchPayload, paginationPayload));
+    res.send(await new GenericRepository(collectionName as string).Search(searchPayload, paginationPayload));
 });
 
 router.use(routes.subjects, subjectsRoutes);
