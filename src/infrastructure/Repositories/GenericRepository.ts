@@ -39,18 +39,15 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async GetByField(searchPayload: IFirestoreSearchPayload, pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
+    public async GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<T>> {
         try {
-            const objects: T[] = [];
-            
-            const response = await this._firestore.GetDocsByField(searchPayload, pagination);
-            response.Documents.forEach(doc => objects.push(doc.data()));
-
-            return new DefaultResponse(objects, response.Pagination);
-        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
+            const object = (await this._firestore.SearchDoc(searchPayload)).data();
+            if (object) return new DefaultResponse(object);
+            throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
+        } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async GetWithPagination(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
+    public async GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
             
@@ -59,6 +56,17 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
             return new DefaultResponse(objects, response.Pagination);
         } catch (error) { throw this.GetErrorObject(error) }
+    }
+
+    public async Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
+        try {
+            const objects: T[] = [];
+            
+            const response = await this._firestore.SearchDocs(searchPayload, pagination);
+            response.Documents.forEach(doc => objects.push(doc.data()));
+
+            return new DefaultResponse(objects, response.Pagination);
+        } catch (error) { console.error(error); throw this.GetErrorObject(error) }
     }
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
