@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { getPaginationParams, getStudentFromBody } from '../helpers';
+import { getPaginationParams, getStudentFromBody } from '../../helpers';
 
-import StudentRepository from '../../infrastructure/Repositories/StudentRepository';
+import StudentRepository from '../../../infrastructure/Repositories/StudentRepository';
 
 const router = express.Router();
 const repository = new StudentRepository();

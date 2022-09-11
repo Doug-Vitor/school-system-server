@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
-import { getPaginationParams } from "../helpers";
+import { getPaginationParams } from "../..//helpers";
 
-import Subject from "../../domain/Entities/Core/Subject";
+import Subject from "../../../domain/Entities/Core/Subject";
 
-import { collectionNames } from "../../domain/Constants";
-import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
+import { collectionNames } from "../../../domain/Constants";
+import GenericRepository from "../../../infrastructure/Repositories/GenericRepository";
 
 const repository = new GenericRepository<Subject>(collectionNames.subjects);
 

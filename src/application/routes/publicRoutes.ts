@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { routes } from '../../domain/Constants';
 
 import authenticationRoutes from './authentication';
-import { getWithPagination } from '../controllers/teachersController';
+import { getWithPagination } from '../controllers/teachers/teachersController';
 
 const router = express.Router();
 

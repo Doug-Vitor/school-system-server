@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
-import { getPaginationParams, getTeacherFromBody } from "../helpers";
+import { getPaginationParams, getTeacherFromBody } from "../../helpers";
 
-import TeacherRepository from "../../infrastructure/Repositories/TeacherRepository";
+import TeacherRepository from "../../../infrastructure/Repositories/TeacherRepository";
 
 const repository = new TeacherRepository();
 

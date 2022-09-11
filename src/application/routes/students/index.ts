@@ -1,6 +1,6 @@
 import express from 'express';
 import { ensureIsAdmin } from '../../middlewares/authentication';
-import { insert, getById, getWithPagination, update } from '../../controllers/studentsController';
+import { insert, getById, getWithPagination, update } from '../../controllers/students/studentsController';
 
 const router = express.Router();
 
