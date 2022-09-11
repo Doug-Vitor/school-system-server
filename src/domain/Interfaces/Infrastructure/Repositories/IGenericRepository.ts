@@ -7,7 +7,7 @@ export default interface IBaseRepository<T> {
     GetById(id: string): Promise<DefaultResponse<T>>
     GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<T>>
     GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
-    GetAll(IFirestoreSearchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
+    Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
     Update(id: string, object: T): Promise<DefaultResponse<T>>
     Delete(id: string): Promise<DefaultResponse<void>>
 }
