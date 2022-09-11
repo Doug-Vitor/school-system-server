@@ -4,6 +4,7 @@ const collectionNames = {
     classrooms: "Classrooms",
     teachers: "Teachers",
     students: "Students",
+    activities: "Activities",
     performances: "StudentPerformances"
 }
 

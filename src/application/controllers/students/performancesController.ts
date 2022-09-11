@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { collectionNames } from "../../../domain/Constants";
 import StudentPerformance from "../../../domain/Entities/Core/StudentPerformance";
-import IFirestoreSearchPayload from "../../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
+
 import GenericRepository from "../../../infrastructure/Repositories/GenericRepository";
+import { collectionNames } from "../../../domain/Constants";
+
 import { getPaginationParams, getPerformanceSearchPayload } from "../../helpers";
 
 const repository = new GenericRepository<StudentPerformance>(collectionNames.performances);
