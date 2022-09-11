@@ -5,7 +5,6 @@ import subjectsRoutes from './subjects';
 import classroomsRoutes from './classrooms';
 import teachersRoutes from './teachers';
 import studentsRoutes from './students';
-import gradesRoutes from './grades';
 
 import GenericRepository from '../../infrastructure/Repositories/GenericRepository';
 import { getPaginationParams, getSearchParams, } from '../helpers';
@@ -23,6 +22,5 @@ router.use(routes.subjects, subjectsRoutes);
 router.use(routes.classrooms, classroomsRoutes);
 router.use(routes.teachers, teachersRoutes);
 router.use(routes.students, studentsRoutes);
-router.use(routes.grades, gradesRoutes);
 
 export default router;
