@@ -12,6 +12,6 @@ export default interface IStudentPerformance{
     GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<StudentPerformance>>
     GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<StudentPerformance[]>>
     Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<StudentPerformance[]>>
-    Update(id: string, performance: StudentPerformance): Promise<DefaultResponse<StudentPerformance>>
+    Update(id: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>>
     Delete(id: string): Promise<DefaultResponse<void>>
 }
