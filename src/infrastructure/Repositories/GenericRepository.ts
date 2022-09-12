@@ -32,7 +32,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async GetById(id: string): Promise<DefaultResponse<T>> {
         try {
             this.ValidateId(id);
-            const object = (await this._firestore.GetDocById(id)).data();
+            const object = (await this._firestore.GetDocById(id)).data();            
             
             if (object) return new DefaultResponse(object);
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
@@ -41,7 +41,8 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async GetFirst(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DefaultResponse<T>> {
         try {
-            return new DefaultResponse((await this._firestore.SearchDoc(searchPayload)).data());
+            const object = await this._firestore.SearchDoc(searchPayload);
+            return new DefaultResponse(object ? object.data() : undefined);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
@@ -69,11 +70,12 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
-            const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
-            await validateOrReject(updated);
+            const oldObject = (await this.GetById(id)).data;
+            object.CreatedAt = oldObject.CreatedAt;
+            await validateOrReject(object);
 
-            this._firestore.UpdateDoc(id, updated);
-            return new DefaultResponse(updated);
+            await this._firestore.UpdateDoc(id, Object.assign(object, oldObject));
+            return new DefaultResponse(object);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
