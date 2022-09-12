@@ -5,19 +5,19 @@ const getPerformanceSearchPayload = (studentId: string, queryParams: any): IFire
 
     const searchPayload = new Array<IFirestoreSearchPayload>();
     searchPayload.push({
-        FieldName: "StudentId",
+        FieldName: "studentId",
         OperatorString: "==",
         SearchValue: studentId
     });
 
     if (year) searchPayload.push({
-        FieldName: "Year",
+        FieldName: "year",
         OperatorString: "==",
         SearchValue: year as number
     });
 
     if (subjectId) searchPayload.push({
-        FieldName: "SubjectId",
+        FieldName: "subjectId",
         OperatorString: "==",
         SearchValue: subjectId as string
     });

@@ -5,22 +5,22 @@ import { ArrayMaxSize, ArrayMinSize, IsArray, } from "class-validator";
 import { getInvalidPropertyErrorString } from "../../Constants";
 
 export default class Teacher extends Person implements ITeacher {
-    public UserId: string;
+    public userId: string;
 
     @IsArray({ message: getInvalidPropertyErrorString("matéria") })
     @ArrayMinSize(1, { message: "É necessário informar pelo menos uma matéria para lecionar." })
     @ArrayMaxSize(3, { message: "São permitidas apenas 3 matérias por professor" })
-    public SubjectsIds: string[];
+    public subjectsIds: string[];
 
     @IsArray({ message: getInvalidPropertyErrorString("sala de aula") })
     @ArrayMinSize(1, { message: "É necessário informar pelo menos uma sala de aula para lecionar." })
-    public ClassroomsIds: string[];
+    public classroomsIds: string[];
 
     constructor(userId: string, name: string, birthdate: Date, phoneNumber: string, realId: string, zipCode: string, subjectsIds: string[], classroomsIds: string[], createdAt?: Date) {
         super(name, birthdate, phoneNumber, realId, zipCode, createdAt);
 
-        this.UserId = userId;
-        this.SubjectsIds = subjectsIds;
-        this.ClassroomsIds = classroomsIds;
+        this.userId = userId;
+        this.subjectsIds = subjectsIds;
+        this.classroomsIds = classroomsIds;
     }
 }

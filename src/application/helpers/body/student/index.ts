@@ -5,23 +5,23 @@ const getPerformanceFromBody = (body: Record<string, any>): StudentPerformance =
     const { academicYear, subjectId, studentId, isApproved } = body;    
 
     return {
-        Id: '',
-        CreatedAt: new Date(),
-        Year: new Date().getFullYear(),
-        AcademicYear: academicYear,
-        SubjectId: subjectId,
-        StudentId: studentId,
-        IsApproved: isApproved
+        id: '',
+        createdAt: new Date(),
+        year: new Date().getFullYear(),
+        academicYear,
+        subjectId,
+        studentId,
+        isApproved
     };
 }
 
 const mapActivity = (activity: Record<string, any>): Activity => {
     return {
-        Id: '',
-        CreatedAt: new Date(),
-        StudentPerformanceId: '',
-        Description: activity.description,
-        Grade: activity.grade
+        id: '',
+        createdAt: new Date(),
+        studentPerformanceId: '',
+        description: activity.description,
+        grade: activity.grade
     }
 } 
 const getActivitiesFromBody = (body: Record<string, any>): Activity[] => {

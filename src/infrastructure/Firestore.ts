@@ -104,9 +104,9 @@ export default class Firestore<T extends BaseEntity> implements IFirestore<T> {
     
     private GetPagination(page: number, itemsPerPage: number, collectionSize: number): IPagination {
         return {
-            CurrentPage: page,
-            HasPreviousPage: page > 1,
-            HasNextPage: page * itemsPerPage < collectionSize
+            currentPage: page,
+            hasPreviousPage: page > 1,
+            hasNextPage: page * itemsPerPage < collectionSize
         }
     }
 }

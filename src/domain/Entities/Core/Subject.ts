@@ -8,11 +8,11 @@ import { getInvalidPropertyErrorString, getLengthErrorString } from '../../Const
 export default class Subject extends BaseEntity implements ISubject {
     @IsString({ message: getInvalidPropertyErrorString("Tema da matéria") })
     @Length(4, 80, { message: getLengthErrorString("Tema da matéria") })
-    public Theme: string;
+    public theme: string;
 
     constructor(theme: string, createdAt?: Date, id?: string) {
         super(id, createdAt);
 
-        this.Theme = theme;
+        this.theme = theme;
     }
 }

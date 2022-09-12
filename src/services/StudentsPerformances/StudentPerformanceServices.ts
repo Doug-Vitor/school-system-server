@@ -31,16 +31,16 @@ export default class StudentPerformanceServices implements IStudentPerformance {
     private async EnsurePerformanceExists(performance: StudentPerformance) {
         const searchPayloads = new Array<IFirestoreSearchPayload>();
         searchPayloads.push({
-            FieldName: "StudentId",
+            FieldName: "studentId",
             OperatorString: "==",
-            SearchValue: performance.StudentId
+            SearchValue: performance.studentId
         }, {
-            FieldName: "SubjectId",
+            FieldName: "subjectId",
             OperatorString: "==",
-            SearchValue: performance.SubjectId
+            SearchValue: performance.subjectId
         });
 
-        return (await this.GetFirst(searchPayloads)).data.Id ? true : false;
+        return (await this.GetFirst(searchPayloads)).data.id ? true : false;
     }
 
     private async GetStudent(studentId: string) {
@@ -49,13 +49,13 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     private async GetStudentClassRoomId(studentId: string) {
         try {
-            return (await this.GetStudent(studentId)).ClassroomId;
+            return (await this.GetStudent(studentId)).classroomId;
         } catch (error) { throw error; }
     }
 
     private SetStaticFields(performance: StudentPerformance, academicYearFromStudent: number) {
-        performance.Year = new Date().getFullYear();
-        performance.AcademicYear = academicYearFromStudent;
+        performance.year = new Date().getFullYear();
+        performance.academicYear = academicYearFromStudent;
 
         return performance;
     }
@@ -64,7 +64,7 @@ export default class StudentPerformanceServices implements IStudentPerformance {
         try {
             if (activities)
                 for await (const activity of activities) {
-                    activity.StudentPerformanceId = performanceId;
+                    activity.studentPerformanceId = performanceId;
                     await this._activityRepository.Insert(activity);
                 }
         } catch (error) { throw error }
@@ -72,13 +72,13 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     public async Insert(authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[] | undefined): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            const student = await this.GetStudent(performance.StudentId);
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, student.Id);
+            const student = await this.GetStudent(performance.studentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.subjectId, student.id);
             if (await this.EnsurePerformanceExists(performance))
                 throw ErrorResponse.BadRequest("Esse aluno já possui desempenho registrado para esta matéria.");
 
-            const newPerformance = (await this._repository.Insert(this.SetStaticFields(performance, student.AcademicYear))).data;
-            this.InsertActivities(newPerformance.Id, activities);
+            const newPerformance = (await this._repository.Insert(this.SetStaticFields(performance, student.academicYear))).data;
+            this.InsertActivities(newPerformance.id, activities);
 
             return new DefaultResponse(newPerformance);
         } catch (error) { throw error }
@@ -110,17 +110,17 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     public async Update(id: string, authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            const student = await this.GetStudent(performance.StudentId);
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, student.Id);
-            return this._repository.Update(id, this.SetStaticFields(performance, student.AcademicYear));
+            const student = await this.GetStudent(performance.studentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.subjectId, student.id);
+            return this._repository.Update(id, this.SetStaticFields(performance, student.academicYear));
         } catch (error) { throw error }
     }
 
     public async Delete(id: string, authenticatedTeacherId: string): Promise<DefaultResponse<void>> {
         try {
             const performance = (await this.GetById(id)).data;
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
-            return await this._repository.Delete(performance.Id);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.subjectId, await this.GetStudentClassRoomId(performance.studentId))
+            return await this._repository.Delete(performance.id);
         } catch (error) { throw error }
     }
 }

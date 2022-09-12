@@ -23,31 +23,31 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
 
     public override async Insert(object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            await this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
+            await this.ValidateTeacherArrays(object.classroomsIds, object.subjectsIds);
             return super.Insert(object);
         } catch (error) { throw error; }
     }
 
     public override async Update(id: string, object: Teacher): Promise<DefaultResponse<Teacher>> {
         try {
-            const teacher = (await super.GetFirst({ FieldName: "UserId", OperatorString: "==", SearchValue: id })).data;
-            await this.ValidateTeacherArrays(object.ClassroomsIds, object.SubjectsIds);
-            return super.Update(teacher.Id, object);
+            const teacher = (await super.GetFirst({ FieldName: "userId", OperatorString: "==", SearchValue: id })).data;
+            await this.ValidateTeacherArrays(object.classroomsIds, object.subjectsIds);
+            return super.Update(teacher.id, object);
         } catch (error) { throw error; }
     }
 
     public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, classroomId: string): Promise<void> {
         try {            
             const searchPayload: IFirestoreSearchPayload = {
-                FieldName: "UserId",
+                FieldName: "userId",
                 OperatorString: "==",
                 SearchValue: authenticatedTeacherId
             }
             const authenticatedTeacher = (await this.GetFirst(searchPayload)).data;
 
-            if (!authenticatedTeacher.ClassroomsIds.includes(classroomId))
+            if (!authenticatedTeacher.classroomsIds.includes(classroomId))
                 throw ErrorResponse.AccessDenied("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
-            if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
+            if (!authenticatedTeacher.subjectsIds.includes(subjectId))
                 throw ErrorResponse.AccessDenied("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
         } catch (error) { throw error; }
     }

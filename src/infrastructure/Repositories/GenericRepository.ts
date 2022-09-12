@@ -71,7 +71,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
             const oldObject = (await this.GetById(id)).data;
-            object.CreatedAt = oldObject.CreatedAt;
+            object.createdAt = oldObject.createdAt;
             await validateOrReject(object);
 
             await this._firestore.UpdateDoc(id, Object.assign(object, oldObject));
@@ -81,7 +81,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async Delete(id: string): Promise<DefaultResponse<void>> {
         try {
-            await this._firestore.DeleteDoc((await this.GetById(id)).data.Id);
+            await this._firestore.DeleteDoc((await this.GetById(id)).data.id);
             return new DefaultResponse();
         } catch (error) { throw this.GetErrorObject(error) }
     }

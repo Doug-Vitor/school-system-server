@@ -7,21 +7,21 @@ import { getInvalidPropertyErrorString, getLengthErrorString, getRequiredPropert
 export default class User extends BaseEntity implements IUser {
     @IsNotEmpty({ message: getRequiredPropertyErrorString(), })
     @IsEmail({}, { message: getInvalidPropertyErrorString() })
-    Email: string;
+    email: string;
 
     @IsString({ message: getInvalidPropertyErrorString("Nome de usuário") })
     @Length(6, 20, { message: getLengthErrorString("Nome de usuário"), })
-    Username: string;
+    username: string;
 
-    @IsNotEmpty({ message: getInvalidPropertyErrorString("Senha"), }) Password: string;
-    public IsAdmin: boolean;
+    @IsNotEmpty({ message: getInvalidPropertyErrorString("Senha"), }) password: string;
+    public isAdmin: boolean;
 
     constructor(email: string, username: string, password: string, isAdmin: boolean = false, createdAt?: Date, id?: string) {
         super(id, createdAt);
 
-        this.Email = email;
-        this.Username = username;
-        this.Password = password;
-        this.IsAdmin = isAdmin;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.isAdmin = isAdmin;
     }
 }

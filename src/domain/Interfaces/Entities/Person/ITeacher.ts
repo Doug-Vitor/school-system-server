@@ -1,5 +1,5 @@
 export default interface ITeacher {
-    UserId: string
-    SubjectsIds: string[]
-    ClassroomsIds: string[]
+    userId: string
+    subjectsIds: string[]
+    classroomsIds: string[]
 }

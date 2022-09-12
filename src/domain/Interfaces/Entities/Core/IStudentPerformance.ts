@@ -1,10 +1,10 @@
 import StudentApproval from '../../../Types/Grades/StudentApproval';
 
 export default interface IStudentPerformance {
-    SubjectId: string
-    StudentId: string
+    subjectId: string
+    studentId: string
     
-    Year: number
-    AcademicYear: number
-    IsApproved: StudentApproval
+    year: number
+    academicYear: number
+    isApproved: StudentApproval
 }

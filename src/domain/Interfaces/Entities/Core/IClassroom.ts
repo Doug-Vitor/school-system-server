@@ -1,5 +1,5 @@
 export default interface IClassroom {
-    Room: string
-    ForAcademicYear: number
-    MaxLength: number
+    room: string
+    forAcademicYear: number
+    maxLength: number
 }

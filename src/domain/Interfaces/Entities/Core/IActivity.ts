@@ -1,5 +1,5 @@
 export default interface IActivity {
-    Description: string
-    Grade: number
-    StudentPerformanceId: string
+    description: string
+    grade: number
+    studentPerformanceId: string
 }

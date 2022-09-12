@@ -9,22 +9,22 @@ import { getInvalidPropertyErrorString,getLengthErrorString } from '../../Consta
 export default abstract class Person extends BaseEntity implements IPerson {
     @IsString({ message: getInvalidPropertyErrorString("Nome") })
     @Length(3, 100, { message: getLengthErrorString("Nome") })
-    Name: string;
+    name: string;
 
-    @IsDate({ message: getInvalidPropertyErrorString("Data de nascimento") }) Birthdate: Date;
+    @IsDate({ message: getInvalidPropertyErrorString("Data de nascimento") }) birthdate: Date;
 
-    @IsCpf({ message: getInvalidPropertyErrorString("CPF") }) public RealId: string;
-    @IsPhoneNumber("BR", { message: getInvalidPropertyErrorString("Número de telefone") }) public PhoneNumber: string
-    @IsCep({ message: getInvalidPropertyErrorString("CEP") }) public ZipCode: string;
+    @IsCpf({ message: getInvalidPropertyErrorString("CPF") }) public realId: string;
+    @IsPhoneNumber("BR", { message: getInvalidPropertyErrorString("Número de telefone") }) public phoneNumber: string
+    @IsCep({ message: getInvalidPropertyErrorString("CEP") }) public zipCode: string;
 
     constructor(name: string, birthdate: Date, phoneNumber: string, realId: string, zipcode: string, createdAt?: Date, id?: string) {
         super(id, createdAt);
 
-        this.Name = name;
-        this.Birthdate = birthdate;
+        this.name = name;
+        this.birthdate = birthdate;
 
-        this.PhoneNumber = phoneNumber;
-        this.RealId = realId;
-        this.ZipCode = zipcode;
+        this.phoneNumber = phoneNumber;
+        this.realId = realId;
+        this.zipCode = zipcode;
     }
 }

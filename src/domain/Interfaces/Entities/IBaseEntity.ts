@@ -1,4 +1,4 @@
 export default interface IBaseEntity {
-    Id: string
-    CreatedAt: Date
+    id: string
+    createdAt: Date
 }

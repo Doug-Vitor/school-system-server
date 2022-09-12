@@ -1,7 +1,7 @@
 export default interface IPerson {
-    Name: string
-    Birthdate: Date
-    PhoneNumber: string
-    RealId: string
-    ZipCode: string
+    name: string
+    birthdate: Date
+    phoneNumber: string
+    realId: string
+    zipCode: string
 }

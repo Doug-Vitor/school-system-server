@@ -6,19 +6,19 @@ import BaseEntity from "../BaseEntity";
 export default class Activity extends BaseEntity implements IActivity {
     @IsString({ message: getInvalidPropertyErrorString("Descrição da atividade") })
     @Length(5, 250, { message: getLengthErrorString("Descrição da atividade") })
-    public Description: string;
+    public description: string;
 
     @IsNumber({ allowNaN: false }, { message: getInvalidPropertyErrorString("Nota") })
-    public Grade: number;
+    public grade: number;
 
     @IsNotEmpty({ message: getRequiredPropertyErrorString("ID do desempenho do aluno") })
-    public StudentPerformanceId: string;
+    public studentPerformanceId: string;
 
     constructor(description: string, grade: number, studentPerformanceId: string, id?: string, createdAt?: Date) {
         super(id, createdAt);
 
-        this.Description = description;
-        this.Grade = grade < 10.1 ? grade : NaN;
-        this.StudentPerformanceId = studentPerformanceId;
+        this.description = description;
+        this.grade = grade < 10.1 ? grade : NaN;
+        this.studentPerformanceId = studentPerformanceId;
     }
 }

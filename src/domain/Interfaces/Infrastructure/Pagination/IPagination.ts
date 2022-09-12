@@ -1,5 +1,5 @@
 export default interface IPagination {
-    CurrentPage: number
-    HasPreviousPage: boolean
-    HasNextPage: boolean
+    currentPage: number
+    hasPreviousPage: boolean
+    hasNextPage: boolean
 }

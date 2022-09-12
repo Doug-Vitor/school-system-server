@@ -18,7 +18,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
 const getByPerformanceId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const searchPayload: IFirestoreSearchPayload = {
-            FieldName: "GradeId",
+            FieldName: "gradeId",
             OperatorString: "==",
             SearchValue: req.params.id as string
         }
