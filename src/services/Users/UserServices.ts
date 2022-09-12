@@ -9,7 +9,6 @@ import ErrorResponse from '../../domain/Responses/ErrorResponse';
 import Responses from "../../domain/Responses/Responses";
 
 import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
-import FirestoreQueryOperatorsEnum from '../../domain/Enums/FirestoreQueryOperatorsEnum';
 import IFirestoreSearchPayload from '../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload';
 import IAuthenticationInfos from '../../domain/Interfaces/Responses/IAuthenticationInfos';
 
@@ -32,10 +31,13 @@ export default class UserServices implements IUserServices {
     }
 
     private GetResponseWithToken(userId: string, isAdmin: boolean): DefaultResponse<IAuthenticationInfos> {
+        const token = generateToken({ UserId: userId, IsAdmin: isAdmin });
+        
         return new DefaultResponse({
             AuthenticatedUserId: userId,
-            GeneratedToken: generateToken({ UserId: userId, IsAdmin: isAdmin })
-        })
+            GeneratedToken: token.generatedToken,
+            ExpirationDate: token.expirationDate
+        });
     }
 
     private async GetByUsername(username: string) {
