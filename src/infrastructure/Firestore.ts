@@ -78,7 +78,7 @@ export default class Firestore<T extends BaseEntity> implements IFirestore<T> {
         };
     }
 
-    public async SearchDoc(searchPayload: IFirestoreSearchPayload): Promise<DocumentSnapshot<T>> {
+    public async SearchDoc(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DocumentSnapshot<T>> {
         return (await getDocs(this.GetDefaultQuery(this.GetWhereConstraint(searchPayload)))).docs[0];
     }
 

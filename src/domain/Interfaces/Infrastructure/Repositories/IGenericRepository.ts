@@ -5,7 +5,7 @@ import IPaginationPayload from "../Pagination/IPaginationPayload";
 export default interface IGenericRepository<T> {
     Insert(object: T): Promise<DefaultResponse<T>>
     GetById(id: string): Promise<DefaultResponse<T>>
-    GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<T>>
+    GetFirst(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DefaultResponse<T>>
     GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
     Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<T[]>>
     Update(id: string, object: T): Promise<DefaultResponse<T>>
