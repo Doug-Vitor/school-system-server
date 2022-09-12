@@ -43,10 +43,21 @@ export default class StudentPerformanceServices implements IStudentPerformance {
         return (await this.GetFirst(searchPayloads)).data.Id ? true : false;
     }
 
+    private async GetStudent(studentId: string) {
+        return (await this._studentRepository.GetById(studentId)).data;
+    }
+
     private async GetStudentClassRoomId(studentId: string) {        
         try {
-            return (await this._studentRepository.GetById(studentId)).data.ClassroomId;
+            return (await this.GetStudent(studentId)).ClassroomId;
         } catch (error) { throw error; }
+    }
+
+    private SetStaticFields(performance: StudentPerformance, academicYearFromStudent: number) {
+        performance.Year = new Date().getFullYear();
+        performance.AcademicYear = academicYearFromStudent;
+
+        return performance;
     }
 
     private async InsertActivities(performanceId: string, activities?: Activity[]) {
@@ -61,13 +72,15 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     public async Insert(authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[] | undefined): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId));
+            const student = await this.GetStudent(performance.StudentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, student.Id);
             if (await this.EnsurePerformanceExists(performance))
                 throw ErrorResponse.BadRequest("Esse aluno já possui desempenho registrado para esta matéria.");
 
-            const newPerformance = await this._repository.Insert(performance);
-            this.InsertActivities(newPerformance.data.Id, activities);
-            return newPerformance;
+            const newPerformance = (await this._repository.Insert(this.SetStaticFields(performance, student.AcademicYear))).data;
+            this.InsertActivities(newPerformance.Id, activities);
+
+            return new DefaultResponse(newPerformance);
         } catch (error) { throw error }
     }
 
