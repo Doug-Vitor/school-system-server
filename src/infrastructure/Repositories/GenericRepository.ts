@@ -70,11 +70,12 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
 
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
-            const updated = Object.assign({ ...(await this.GetById(id)).data }, object);
-            await validateOrReject(updated);
+            const oldObject = (await this.GetById(id)).data;
+            object.CreatedAt = oldObject.CreatedAt;
+            await validateOrReject(object);
 
-            this._firestore.UpdateDoc(id, updated);
-            return new DefaultResponse(updated);
+            await this._firestore.UpdateDoc(id, Object.assign(object, oldObject));
+            return new DefaultResponse(object);
         } catch (error) { throw this.GetErrorObject(error) }
     }
 

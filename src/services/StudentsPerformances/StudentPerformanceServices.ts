@@ -47,7 +47,7 @@ export default class StudentPerformanceServices implements IStudentPerformance {
         return (await this._studentRepository.GetById(studentId)).data;
     }
 
-    private async GetStudentClassRoomId(studentId: string) {        
+    private async GetStudentClassRoomId(studentId: string) {
         try {
             return (await this.GetStudent(studentId)).ClassroomId;
         } catch (error) { throw error; }
@@ -110,14 +110,15 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     public async Update(id: string, authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
-            return this._repository.Update(id, performance);
+            const student = await this.GetStudent(performance.StudentId);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, student.Id);
+            return this._repository.Update(id, this.SetStaticFields(performance, student.AcademicYear));
         } catch (error) { throw error }
     }
 
     public async Delete(id: string, authenticatedTeacherId: string): Promise<DefaultResponse<void>> {
         try {
-            const performance = await (await this.GetById(id)).data;
+            const performance = (await this.GetById(id)).data;
             await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
             return await this._repository.Delete(performance.Id);
         } catch (error) { throw error }
