@@ -51,7 +51,7 @@ export default class Firestore<T extends BaseEntity> implements IFirestore<T> {
     }
 
     private GetDefaultQuery(queryConstraints: QueryConstraint[] = []): Query<T> {
-        queryConstraints.unshift(orderBy("CreatedAt"));
+        queryConstraints.unshift(orderBy("createdAt"));
         return query(this._collection, ...queryConstraints).withConverter(this._converter);
     }
 

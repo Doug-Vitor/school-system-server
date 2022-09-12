@@ -35,6 +35,7 @@ export default class UserServices implements IUserServices {
         
         return new DefaultResponse({
             authenticatedUserId: userId,
+            isAdmin,
             generatedToken: token.generatedToken,
             expirationDate: token.expirationDate
         });
@@ -57,7 +58,7 @@ export default class UserServices implements IUserServices {
 
     public async CreateUser(user: User): Promise<DefaultResponse<any> | unknown> {
         try {
-            if ((await this._repository.GetFirst(this.GetDefaultSearchPayload(user.username))).data)
+            if ((await this._repository.GetFirst(this.GetDefaultSearchPayload(user.username))).data.id)
                 this.ThrowBadRequest("Já existe um usuário cadastrado com o nome de usuário fornecido");
 
             user.password = await bcrypt.hash(user.password, 1);

@@ -21,7 +21,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     private ValidateId(id: string) {
         if (!id) throw new ErrorResponse(Responses.BAD_REQUEST_ERROR.StatusCode, getIdNotProvidedErrorString());
     }
-    
+
     public async Insert(object: T): Promise<DefaultResponse<T>> {
         try {
             await validateOrReject(object);
@@ -32,8 +32,8 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async GetById(id: string): Promise<DefaultResponse<T>> {
         try {
             this.ValidateId(id);
-            const object = (await this._firestore.GetDocById(id)).data();            
-            
+            const object = (await this._firestore.GetDocById(id)).data();
+
             if (object) return new DefaultResponse(object);
             throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, getNotFoundErrorString());
         } catch (error) { throw this.GetErrorObject(error) }
@@ -49,7 +49,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
-            
+
             const response = await this._firestore.GetDocs(pagination);
             response.Documents.forEach(doc => objects.push(doc.data()));
 
@@ -60,7 +60,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<T[]>> {
         try {
             const objects: T[] = [];
-            
+
             const response = await this._firestore.SearchDocs(searchPayload, pagination);
             response.Documents.forEach(doc => objects.push(doc.data()));
 
@@ -71,10 +71,13 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
     public async Update(id: string, object: T): Promise<DefaultResponse<T>> {
         try {
             const oldObject = (await this.GetById(id)).data;
-            object.createdAt = oldObject.createdAt;
+
+            for (const key in object)
+                if (!object[key]) object[key] = oldObject[key];
+
             await validateOrReject(object);
 
-            await this._firestore.UpdateDoc(id, Object.assign(object, oldObject));
+            await this._firestore.UpdateDoc(id, Object.assign({}, object));
             return new DefaultResponse(object);
         } catch (error) { throw this.GetErrorObject(error) }
     }

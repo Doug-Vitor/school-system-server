@@ -11,7 +11,7 @@ const converter = <T extends BaseEntity>() => ({
     fromFirestore(snapshot: QueryDocumentSnapshot, options: SnapshotOptions): T {
         const object = snapshot.data() as T;
         object.id = snapshot.id;
-        object.createdAt = (snapshot.get("CreatedAt") as Timestamp).toDate();
+        object.createdAt = (snapshot.get("createdAt") as Timestamp).toDate();
         
         return object;
     }

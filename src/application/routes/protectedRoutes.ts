@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { routes } from '../../domain/Constants';
+import { collectionNames, routes } from '../../domain/Constants';
 import subjectsRoutes from './subjects';
 import classroomsRoutes from './classrooms';
 import teachersRoutes from './teachers';
@@ -10,6 +10,7 @@ import activitiesRoutes from './activities';
 
 import GenericRepository from '../../infrastructure/Repositories/GenericRepository';
 import { getPaginationParams, getSearchParams, } from '../helpers';
+import Classroom from '../../domain/Entities/Core/Classroom';
 
 const router = express.Router();
 
