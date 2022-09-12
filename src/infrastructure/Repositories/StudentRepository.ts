@@ -4,12 +4,13 @@ import Classroom from "../../domain/Entities/Core/Classroom";
 import { collectionNames } from "../../domain/Constants";
 import GenericRepository from "./GenericRepository";
 import DefaultResponse from "../../domain/Responses/DefaultResponse";
+import { converter } from "../Converters/PersonConverter";
 
 export default class StudentRepository extends GenericRepository<Student> {
     private _classRoomRepository: GenericRepository<Classroom>
 
     constructor() {
-        super(collectionNames.students);
+        super(collectionNames.students, converter());
         this._classRoomRepository = new GenericRepository(collectionNames.classrooms);
     }
 

@@ -14,8 +14,8 @@ import { validateOrReject, ValidationError } from "class-validator";
 export default class GenericRepository<T extends BaseEntity> implements IGenericRepository<T> {
     protected _firestore: Firestore<T>;
 
-    constructor(collectionName: string) {
-        this._firestore = new Firestore<T>(collectionName);
+    constructor(collectionName: string, converter?: any) {
+        this._firestore = new Firestore<T>(collectionName, converter);
     }
 
     private ValidateId(id: string) {

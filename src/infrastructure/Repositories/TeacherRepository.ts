@@ -4,6 +4,7 @@ import Classroom from "../../domain/Entities/Core/Classroom";
 
 import ITeacherRepository from "../../domain/Interfaces/Infrastructure/Repositories/ITeacherRepository";
 import GenericRepository from "./GenericRepository";
+import { converter } from "../Converters/PersonConverter";
 import { collectionNames } from "../../domain/Constants";
 
 import IFirestoreSearchPayload from "../../domain/Interfaces/Infrastructure/Firestore/IFirestoreSearchPayload";
@@ -15,7 +16,7 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
     private _subjectRepository: GenericRepository<Subject>
 
     constructor() {
-        super(collectionNames.teachers);
+        super(collectionNames.teachers, converter());
 
         this._classRoomRepository = new GenericRepository(collectionNames.classrooms);
         this._subjectRepository = new GenericRepository(collectionNames.subjects);
