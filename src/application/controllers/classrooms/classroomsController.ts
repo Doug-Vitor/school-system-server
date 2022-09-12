@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { collectionNames } from "../../domain/Constants";
+import { collectionNames } from "../../../domain/Constants";
 
-import Classroom from "../../domain/Entities/Core/Classroom";
-import GenericRepository from "../../infrastructure/Repositories/GenericRepository";
+import Classroom from "../../../domain/Entities/Core/Classroom";
+import GenericRepository from "../../../infrastructure/Repositories/GenericRepository";
 
 const repository = new GenericRepository<Classroom>(collectionNames.classrooms);
 

@@ -4,7 +4,8 @@ const collectionNames = {
     classrooms: "Classrooms",
     teachers: "Teachers",
     students: "Students",
-    grades: "Grades"
+    activities: "Activities",
+    performances: "StudentPerformances"
 }
 
 export { collectionNames }

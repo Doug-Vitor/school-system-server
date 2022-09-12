@@ -1,5 +1,5 @@
 import express from 'express';
-import { insert, getWithPagination, getById } from '../../controllers/subjectsController';
+import { insert, getWithPagination, getById } from '../../controllers/subjects/subjectsController';
 
 const router = express.Router();
 
