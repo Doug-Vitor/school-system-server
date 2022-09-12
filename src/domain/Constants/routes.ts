@@ -4,7 +4,8 @@ const routes = {
     classrooms: "/classrooms",
     teachers: "/teachers",
     students: "/students",
-    grades: "/grades"
+    performances: "/performances",
+    activities: "/activities"
 }
 
 export { routes }

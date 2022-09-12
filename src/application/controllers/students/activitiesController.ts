@@ -15,7 +15,7 @@ const getById = async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) { next(error) }
 }
 
-const getByGradeId = async (req: Request, res: Response, next: NextFunction) => {
+const getByPerformanceId = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const searchPayload: IFirestoreSearchPayload = {
             FieldName: "GradeId",
@@ -27,4 +27,4 @@ const getByGradeId = async (req: Request, res: Response, next: NextFunction) => 
     } catch (error) { next(error) }
 }
 
-export { getById, getByGradeId }
+export { getById, getByPerformanceId }
