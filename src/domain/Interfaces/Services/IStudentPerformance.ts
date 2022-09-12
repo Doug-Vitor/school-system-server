@@ -7,11 +7,11 @@ import IPaginationPayload from "../Infrastructure/Pagination/IPaginationPayload"
 import DefaultResponse from "../../Responses/DefaultResponse"
 
 export default interface IStudentPerformance{
-    Insert(performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>>
+    Insert(authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>>
     GetById(id: string): Promise<DefaultResponse<StudentPerformance>>
-    GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<StudentPerformance>>
+    GetFirst(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DefaultResponse<StudentPerformance>>
     GetAll(pagination: IPaginationPayload): Promise<DefaultResponse<StudentPerformance[]>>
     Search(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[], pagination: IPaginationPayload): Promise<DefaultResponse<StudentPerformance[]>>
-    Update(id: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>>
-    Delete(id: string): Promise<DefaultResponse<void>>
+    Update(id: string, authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>>
+    Delete(id: string, authenticatedTeacherId: string): Promise<DefaultResponse<void>>
 }

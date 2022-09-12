@@ -74,7 +74,7 @@ export default class StudentPerformanceServices implements IStudentPerformance {
         } catch (error) { throw error }
     }
 
-    public async GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<StudentPerformance>> {
+    public async GetFirst(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DefaultResponse<StudentPerformance>> {
         try {
             return await this._repository.GetFirst(searchPayload);
         } catch (error) { throw error }

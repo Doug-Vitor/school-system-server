@@ -39,7 +39,7 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         } catch (error) { throw this.GetErrorObject(error) }
     }
 
-    public async GetFirst(searchPayload: IFirestoreSearchPayload): Promise<DefaultResponse<T>> {
+    public async GetFirst(searchPayload: IFirestoreSearchPayload | IFirestoreSearchPayload[]): Promise<DefaultResponse<T>> {
         try {
             return new DefaultResponse((await this._firestore.SearchDoc(searchPayload)).data());
         } catch (error) { throw this.GetErrorObject(error) }
