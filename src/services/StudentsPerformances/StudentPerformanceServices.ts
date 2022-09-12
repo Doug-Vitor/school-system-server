@@ -11,20 +11,21 @@ import GenericRepository from "../../infrastructure/Repositories/GenericReposito
 import { collectionNames } from "../../domain/Constants";
 import TeacherRepository from "../../infrastructure/Repositories/TeacherRepository";
 import StudentRepository from "../../infrastructure/Repositories/StudentRepository";
+import ErrorResponse from "../../domain/Responses/ErrorResponse";
 
 export default class StudentPerformanceServices implements IStudentPerformance {
     private _repository: GenericRepository<StudentPerformance>;
 
-    private _activityInsert;
-    private _teacherPermissionValidator;
-    private _getStudentById;
+    private _activityRepository: GenericRepository<Activity>;
+    private _teacherRepository: TeacherRepository;
+    private _studentRepository: StudentRepository;
 
     constructor() {
         this._repository = new GenericRepository(collectionNames.performances);
 
-        this._activityInsert = new GenericRepository(collectionNames.activities).Insert;
-        this._teacherPermissionValidator = new TeacherRepository().ValidateTeacherPermissions;
-        this._getStudentById = new StudentRepository().GetById;
+        this._activityRepository = new GenericRepository(collectionNames.activities);
+        this._teacherRepository = new TeacherRepository();
+        this._studentRepository = new StudentRepository();
     }
 
     private async EnsurePerformanceExists(performance: StudentPerformance) {
@@ -39,11 +40,13 @@ export default class StudentPerformanceServices implements IStudentPerformance {
             SearchValue: performance.SubjectId
         });
 
-        return (await this.GetFirst(searchPayloads)).data;
+        return (await this.GetFirst(searchPayloads)).data.Id ? true : false;
     }
 
-    private async GetStudentClassRoomId(studentId: string) {
-        return (await this._getStudentById(studentId)).data.ClassroomId;
+    private async GetStudentClassRoomId(studentId: string) {        
+        try {
+            return (await this._studentRepository.GetById(studentId)).data.ClassroomId;
+        } catch (error) { throw error; }
     }
 
     private async InsertActivities(performanceId: string, activities?: Activity[]) {
@@ -51,16 +54,16 @@ export default class StudentPerformanceServices implements IStudentPerformance {
             if (activities)
                 for await (const activity of activities) {
                     activity.StudentPerformanceId = performanceId;
-                    await this._activityInsert(activity);
+                    await this._activityRepository.Insert(activity);
                 }
         } catch (error) { throw error }
     }
 
     public async Insert(authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[] | undefined): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            this._teacherPermissionValidator(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId));
-            const existingPerformance = await this.EnsurePerformanceExists(performance);
-            if (existingPerformance) return this.Update(authenticatedTeacherId, existingPerformance.Id, existingPerformance);
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId));
+            if (await this.EnsurePerformanceExists(performance))
+                throw ErrorResponse.BadRequest("Esse aluno já possui desempenho registrado para esta matéria.");
 
             const newPerformance = await this._repository.Insert(performance);
             this.InsertActivities(newPerformance.data.Id, activities);
@@ -94,7 +97,7 @@ export default class StudentPerformanceServices implements IStudentPerformance {
 
     public async Update(id: string, authenticatedTeacherId: string, performance: StudentPerformance, activities?: Activity[]): Promise<DefaultResponse<StudentPerformance>> {
         try {
-            this._teacherPermissionValidator(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
             return this._repository.Update(id, performance);
         } catch (error) { throw error }
     }
@@ -102,7 +105,7 @@ export default class StudentPerformanceServices implements IStudentPerformance {
     public async Delete(id: string, authenticatedTeacherId: string): Promise<DefaultResponse<void>> {
         try {
             const performance = await (await this.GetById(id)).data;
-            this._teacherPermissionValidator(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
+            await this._teacherRepository.ValidateTeacherPermissions(authenticatedTeacherId, performance.SubjectId, await this.GetStudentClassRoomId(performance.StudentId))
             return await this._repository.Delete(performance.Id);
         } catch (error) { throw error }
     }

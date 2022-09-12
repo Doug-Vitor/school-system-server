@@ -2,7 +2,7 @@ import StudentPerformance from "../../../../domain/Entities/Core/StudentPerforma
 import Activity from "../../../../domain/Entities/Core/Activity";
 
 const getPerformanceFromBody = (body: Record<string, any>): StudentPerformance => {
-    const { academicYear, subjectId, studentId, IsApproved } = body;
+    const { academicYear, subjectId, studentId, isApproved } = body;    
 
     return {
         Id: '',
@@ -11,7 +11,7 @@ const getPerformanceFromBody = (body: Record<string, any>): StudentPerformance =
         AcademicYear: academicYear,
         SubjectId: subjectId,
         StudentId: studentId,
-        IsApproved: IsApproved
+        IsApproved: isApproved
     };
 }
 
@@ -25,7 +25,7 @@ const mapActivity = (activity: Record<string, any>): Activity => {
     }
 } 
 const getActivitiesFromBody = (body: Record<string, any>): Activity[] => {
-    const { activities } = body.activities;
+    const { activities } = body;
 
     return activities.map(mapActivity);
 }

@@ -37,7 +37,7 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
     }
 
     public async ValidateTeacherPermissions(authenticatedTeacherId: string, subjectId: string, classroomId: string): Promise<void> {
-        try {
+        try {            
             const searchPayload: IFirestoreSearchPayload = {
                 FieldName: "UserId",
                 OperatorString: "==",

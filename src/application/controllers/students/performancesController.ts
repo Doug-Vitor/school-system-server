@@ -1,13 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 
 import { getActivitiesFromBody, getPaginationParams, getPerformanceFromBody, getPerformanceSearchPayload } from "../../helpers";
-import StudentPerformanceServices from "../../../services/StudentsPerformances/IStudentPerformanceServices";
+import StudentPerformanceServices from "../../../services/StudentsPerformances/StudentPerformanceServices";
 
 const services = new StudentPerformanceServices();
 
 const insert = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const [performance, activities] = [getPerformanceFromBody(req.body), getActivitiesFromBody(req.body)]
+    try {        
+        const [performance, activities] = [getPerformanceFromBody(req.body), getActivitiesFromBody(req.body)];
         res.send(await services.Insert(req.headers.authenticatedUserId as string, performance, activities));
     } catch (error) { next(error) }
 }
