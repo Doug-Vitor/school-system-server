@@ -46,9 +46,9 @@ export default class TeacherRepository extends GenericRepository<Teacher> implem
             const authenticatedTeacher = (await this.GetFirst(searchPayload)).data;
 
             if (!authenticatedTeacher.ClassroomsIds.includes(classroomId))
-                throw ErrorResponse.Unauthorized("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
+                throw ErrorResponse.AccessDenied("Você não leciona nessa sala de aula e, portanto, não pode realizar alterações por aqui.");
             if (!authenticatedTeacher.SubjectsIds.includes(subjectId))
-                throw ErrorResponse.Unauthorized("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
+                throw ErrorResponse.AccessDenied("Você não leciona essa matéria e, portanto, não pode realizar alterações por aqui.");
         } catch (error) { throw error; }
     }
 

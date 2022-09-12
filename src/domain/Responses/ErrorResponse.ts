@@ -29,4 +29,9 @@ export default class ErrorResponse<T> extends Error {
         const response = Responses.UNAUTHORIZED_ERROR;
         return new ErrorResponse(response.StatusCode, errorMessage ?? response.Message, data);
     }
+
+    static AccessDenied(errorMessage?: string, data?: {}) {
+        const response = Responses.ACCESS_DENIED_ERROR;
+        return new ErrorResponse(response.StatusCode, errorMessage ?? response.Message, data);
+    }
 }
