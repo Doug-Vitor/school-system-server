@@ -1,23 +1,39 @@
 import { NextFunction, Request, Response } from "express";
-import StudentPerformance from "../../../domain/Entities/Core/StudentPerformance";
 
-import GenericRepository from "../../../infrastructure/Repositories/GenericRepository";
-import { collectionNames } from "../../../domain/Constants";
+import { getActivitiesFromBody, getPaginationParams, getPerformanceFromBody, getPerformanceSearchPayload } from "../../helpers";
+import StudentPerformanceServices from "../../../services/StudentsPerformances/IStudentPerformanceServices";
 
-import { getPaginationParams, getPerformanceSearchPayload } from "../../helpers";
+const services = new StudentPerformanceServices();
 
-const repository = new GenericRepository<StudentPerformance>(collectionNames.performances);
+const insert = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const [performance, activities] = [getPerformanceFromBody(req.body), getActivitiesFromBody(req.body)]
+        res.send(await services.Insert(req.headers.authenticatedUserId as string, performance, activities));
+    } catch (error) { next(error) }
+}
 
 const getById = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.GetById(req.params.id as string));
+        res.send(await services.GetById(req.params.id as string));
     } catch (error) { next(error) }
 }
 
 const getByStudentId = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        res.send(await repository.Search(getPerformanceSearchPayload(req.params.id as string, req.query), getPaginationParams(req.query)));
+        res.send(await services.Search(getPerformanceSearchPayload(req.params.id as string, req.query), getPaginationParams(req.query)));
     } catch (error) { next(error) }
 }
 
-export { getById, getByStudentId }
+const update = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const [performance, activities] = [getPerformanceFromBody(req.body), getActivitiesFromBody(req.body)];
+        res.send(await services.Update(req.params.id, req.headers.authenticatedUserId as string, performance, activities));
+    } catch (error) { next(error) }
+}
+const remove = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.send(await services.Delete(req.params.id, req.headers.authenticatedUserId as string));
+    } catch (error) { next(error) }
+}
+
+export { insert, getById, getByStudentId, update, remove }

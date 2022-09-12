@@ -21,5 +21,5 @@ const getSearchParams = (queryParams: any): IFirestoreSearchPayload => {
     }
 }
 
-export * from './performance';
+export * from './studentPerformance';
 export { getPaginationParams, getSearchParams }
