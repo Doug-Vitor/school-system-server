@@ -42,7 +42,7 @@ export default class UserServices implements IUserServices {
     }
 
     private async GetByUsername(username: string) {
-        const user = (await this._repository.Search(this.GetDefaultSearchPayload(username), {})).data[0];
+        const user = (await this._repository.GetFirst(this.GetDefaultSearchPayload(username))).data;
         if (user) return user;
         throw new ErrorResponse(Responses.NOT_FOUND_ERROR.StatusCode, "Não foi possível encontrar um usuário com o nome de usuário fornecido");
     }
