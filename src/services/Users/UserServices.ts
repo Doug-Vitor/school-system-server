@@ -30,11 +30,12 @@ export default class UserServices implements IUserServices {
         }
     }
 
-    private GetResponseWithToken(userId: string, isAdmin: boolean): DefaultResponse<IAuthenticationInfos> {
+    private GetResponseWithToken(userId: string, username: string, isAdmin: boolean): DefaultResponse<IAuthenticationInfos> {
         const token = generateToken({ UserId: userId, IsAdmin: isAdmin });
         
         return new DefaultResponse({
             authenticatedUserId: userId,
+            authenticatedUsername: username,
             isAdmin,
             generatedToken: token.generatedToken,
             expirationDate: token.expirationDate
@@ -50,7 +51,7 @@ export default class UserServices implements IUserServices {
     public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
         if (username && password) {
             const user = await this.GetByUsername(username);
-            if (await validatePassword(password, user.password)) return this.GetResponseWithToken(user.id, user.isAdmin);
+            if (await validatePassword(password, user.password)) return this.GetResponseWithToken(user.id, user.username, user.isAdmin);
             this.ThrowBadRequest("Senha inválida");
         }
         else this.ThrowBadRequest("Por favor, preencha todos os campos");
@@ -64,7 +65,7 @@ export default class UserServices implements IUserServices {
             user.password = await bcrypt.hash(user.password, 1);
 
             const newUser = (await this._repository.Insert(user)).data;
-            return this.GetResponseWithToken(newUser.id, newUser.isAdmin);
+            return this.GetResponseWithToken(newUser.id, newUser.username, newUser.isAdmin);
         } catch (error) { throw error }
     }
 
