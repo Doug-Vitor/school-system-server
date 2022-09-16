@@ -93,10 +93,13 @@ export default class GenericRepository<T extends BaseEntity> implements IGeneric
         if (error instanceof ErrorResponse) return error;
         else if (error instanceof Array<ValidationError>) {
             const response = Responses.BAD_REQUEST_ERROR;
-            const errors = error.map((validationError: ValidationError) => Object.values(validationError.constraints ?? {}));
-            return new ErrorResponse(response.StatusCode, response.Message, errors);
+            return new ErrorResponse(response.StatusCode, response.Message, this.GetValidationErrors(error));
         }
 
         return new ErrorResponse();
+    }
+
+    GetValidationErrors(validationErrors: Array<ValidationError>) {
+        return validationErrors.flatMap(validationError => Object.values(validationError.constraints ?? {}));
     }
 }
