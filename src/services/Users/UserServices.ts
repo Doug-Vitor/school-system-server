@@ -14,6 +14,7 @@ import IAuthenticationInfos from '../../domain/Interfaces/Responses/IAuthenticat
 
 import { generateToken, validatePassword } from './AuthServices';
 import { collectionNames } from '../../domain/Constants';
+import Teacher from '../../domain/Entities/Person/Teacher';
 
 export default class UserServices implements IUserServices {
     private _repository: GenericRepository<User>;
@@ -30,16 +31,27 @@ export default class UserServices implements IUserServices {
         }
     }
 
-    private GetResponseWithToken(userId: string, username: string, isAdmin: boolean): DefaultResponse<IAuthenticationInfos> {
+    private async GetResponseWithToken(userId: string, username: string, isAdmin: boolean): Promise<DefaultResponse<IAuthenticationInfos>> {
         const token = generateToken({ UserId: userId, IsAdmin: isAdmin });
         
         return new DefaultResponse({
             authenticatedUserId: userId,
             authenticatedUsername: username,
+            ownsTeacherProfile: await this.EnsureUserHasProfile(userId),
             isAdmin,
-            generatedToken: token.generatedToken,
-            expirationDate: token.expirationDate
+            token: {
+                generatedToken: token.generatedToken,
+                expirationDate: token.expirationDate
+            }
         });
+    }
+
+    private async EnsureUserHasProfile(userId: string) {
+        return (await new GenericRepository<Teacher>(collectionNames.teachers).GetFirst({
+            FieldName: "userId",
+            OperatorString: "==",
+            SearchValue: userId
+        })).data.id ? true : false;
     }
 
     private async GetByUsername(username: string) {
@@ -51,7 +63,7 @@ export default class UserServices implements IUserServices {
     public async ValidateLogin(username: string, password: string): Promise<DefaultResponse<string> | unknown> {
         if (username && password) {
             const user = await this.GetByUsername(username);
-            if (await validatePassword(password, user.password)) return this.GetResponseWithToken(user.id, user.username, user.isAdmin);
+            if (await validatePassword(password, user.password)) return await this.GetResponseWithToken(user.id, user.username, user.isAdmin);
             this.ThrowBadRequest("Senha inválida");
         }
         else this.ThrowBadRequest("Por favor, preencha todos os campos");
@@ -65,7 +77,7 @@ export default class UserServices implements IUserServices {
             user.password = await bcrypt.hash(user.password, 1);
 
             const newUser = (await this._repository.Insert(user)).data;
-            return this.GetResponseWithToken(newUser.id, newUser.username, newUser.isAdmin);
+            return await this.GetResponseWithToken(newUser.id, newUser.username, newUser.isAdmin);
         } catch (error) { throw error }
     }
 
