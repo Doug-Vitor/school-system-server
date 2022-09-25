@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 
-import { collectionNames, routes } from '../../domain/Constants';
+import { routes } from '../../domain/Constants';
 import subjectsRoutes from './subjects';
 import classroomsRoutes from './classrooms';
 import teachersRoutes from './teachers';
@@ -10,7 +10,7 @@ import activitiesRoutes from './activities';
 
 import GenericRepository from '../../infrastructure/Repositories/GenericRepository';
 import { getPaginationParams, getSearchParams, } from '../helpers';
-import Classroom from '../../domain/Entities/Core/Classroom';
+import { getAuthenticatedTeacher } from '../controllers/teachers/teachersController';
 
 const router = express.Router();
 
@@ -24,6 +24,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.use(routes.subjects, subjectsRoutes);
 router.use(routes.classrooms, classroomsRoutes);
 router.use(routes.teachers, teachersRoutes);
+router.get(routes.teacher, getAuthenticatedTeacher)
 router.use(routes.students, studentsRoutes);
 router.use(routes.activities, activitiesRoutes);
 router.use(routes.performances, performancesRoutes);

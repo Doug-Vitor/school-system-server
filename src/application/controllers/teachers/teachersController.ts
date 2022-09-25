@@ -17,9 +17,19 @@ const getWithPagination = async (req: Request, res: Response, next: NextFunction
     } catch (error) { next(error) }
 }
 
-const getById = async (req: Request, res: Response, next: NextFunction) => {
+const getById = async (req: Request, res: Response, next: NextFunction) => {    
     try {
         res.send(await repository.GetById(req.params.id as string));
+    } catch (error) { next(error) }
+};
+
+const getAuthenticatedTeacher = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.send(await repository.GetFirst({
+            FieldName: 'userId',
+            OperatorString: "==",
+            SearchValue: req.headers.authenticatedUserId as string
+        }));
     } catch (error) { next(error) }
 };
 
@@ -30,4 +40,4 @@ const update = async (req: Request, res: Response, next: NextFunction) => {
     } catch (error) { next(error) }
 };
 
-export { insert, getById, getWithPagination, update }
+export { insert, getById, getAuthenticatedTeacher, getWithPagination, update }
